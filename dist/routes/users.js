@@ -14,6 +14,7 @@ router.put("/update", verifyUser, users_1.update);
 router.put("/changepassword", verifyUser, users_1.changepassword);
 router.post("/login", passport.authenticate("local"), users_1.login);
 router.post("/login/googleAuth", users_1.loginGoogleAuth);
+router.post("/login/facebookAuth", users_1.loginFacebookAuth);
 router.post("/register", users_1.register);
 router.post("/refreshToken", users_1.refreshToken);
 router.post("/emailconfirm", verifyUser, users_1.emailconfirm);

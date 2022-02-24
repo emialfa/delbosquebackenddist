@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logout = exports.deleteUser = exports.deleteTestUser = exports.emailresetpassword = exports.confirm = exports.emailconfirm = exports.refreshToken = exports.register = exports.loginGoogleAuth = exports.login = exports.changepassword = exports.update = exports.getUserFromEmail = exports.getUserFromId = exports.getAllUsers = void 0;
+exports.logout = exports.deleteUser = exports.deleteTestUser = exports.emailresetpassword = exports.confirm = exports.emailconfirm = exports.refreshToken = exports.register = exports.loginFacebookAuth = exports.loginGoogleAuth = exports.login = exports.changepassword = exports.update = exports.getUserFromEmail = exports.getUserFromId = exports.getAllUsers = void 0;
 const user_1 = __importDefault(require("../models/user"));
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -154,6 +154,55 @@ const loginGoogleAuth = (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.loginGoogleAuth = loginGoogleAuth;
+const loginFacebookAuth = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _k, _l;
+    const { accessToken, userID } = req.body;
+    const URL = `https://graph.facebook.com/v2.9/${userID}/?fields=id,name,email,picture&access_token=${accessToken}`;
+    const data = yield fetch(URL).then(res => res.json()).then(res => { return res; });
+    const { email, name } = data;
+    const user = yield user_1.default.findOne({ email: email });
+    if (user) {
+        const token = getToken({ _id: user._id });
+        const refreshToken = getRefreshToken({ _id: user._id });
+        (_k = user.refreshToken) === null || _k === void 0 ? void 0 : _k.push({ refreshToken });
+        yield user.save();
+        res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS);
+        return res.status(200).send({
+            success: true,
+            user: user.email,
+            token: token,
+            favorites: user.favorites,
+            cart: user.cart,
+            isAdmin: user.isAdmin,
+        });
+    }
+    else {
+        let newUser = new user_1.default({
+            success: true,
+            email,
+            name,
+            favorites: req.body.favorites,
+            cart: req.body.cart,
+            refreshToken: [],
+            passwordHash: bcrypt.hashSync(process.env.GOOGLE_PASSWORD, 10),
+            isAdmin: false,
+            activation: true,
+        });
+        const token = getToken({ _id: newUser._id });
+        const refreshToken = getRefreshToken({ _id: newUser._id });
+        (_l = newUser.refreshToken) === null || _l === void 0 ? void 0 : _l.push({ refreshToken });
+        yield newUser.save();
+        res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS);
+        return res.status(200).send({
+            success: true,
+            token: token,
+            favorites: newUser.favorites,
+            cart: newUser.cart,
+            isAdmin: newUser.isAdmin,
+        });
+    }
+});
+exports.loginFacebookAuth = loginFacebookAuth;
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userExist = yield user_1.default.findOne({ email: req.body.email });
     if (userExist)
@@ -173,7 +222,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.register = register;
 const refreshToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _k;
+    var _m;
     const { signedCookies = {} } = req;
     const { refreshToken } = signedCookies;
     if (!refreshToken)
@@ -184,7 +233,7 @@ const refreshToken = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     if (!user)
         return res.status(401).send({ success: false, message: "Unauthorized" });
     // Find the refresh token against the user record in database
-    const tokenIndex = (_k = user.refreshToken) === null || _k === void 0 ? void 0 : _k.findIndex((item) => item.refreshToken === refreshToken);
+    const tokenIndex = (_m = user.refreshToken) === null || _m === void 0 ? void 0 : _m.findIndex((item) => item.refreshToken === refreshToken);
     if (tokenIndex === -1)
         res.status(401).send({ success: false, message: "Unauthorized" });
     const token = getToken({ _id: userId });
@@ -197,31 +246,31 @@ const refreshToken = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.refreshToken = refreshToken;
 const emailconfirm = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _l, _m, _o;
-    const userExist = yield user_1.default.findOne({ email: (_l = req.user) === null || _l === void 0 ? void 0 : _l.email });
+    var _o, _p, _q;
+    const userExist = yield user_1.default.findOne({ email: (_o = req.user) === null || _o === void 0 ? void 0 : _o.email });
     if (!userExist)
         return res.status(400).send("User dont exist.");
     if (userExist.activation)
         return res.status(200).json({ activation: true });
     const secret = process.env.secret;
     const token = jwt.sign({
-        userEmail: (_m = req.user) === null || _m === void 0 ? void 0 : _m.email,
+        userEmail: (_p = req.user) === null || _p === void 0 ? void 0 : _p.email,
     }, secret);
-    const registerMailResponse = yield registerMail(userExist.name, (_o = req.user) === null || _o === void 0 ? void 0 : _o.email, token);
+    const registerMailResponse = yield registerMail(userExist.name, (_q = req.user) === null || _q === void 0 ? void 0 : _q.email, token);
     if (!registerMailResponse)
         return res.status(400).json({ success: false, message: registerMailResponse });
     return res.status(200).json({ success: true, message: registerMailResponse });
 });
 exports.emailconfirm = emailconfirm;
 const confirm = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _p, _q;
-    const userExist = yield user_1.default.findOne({ email: (_p = req.user) === null || _p === void 0 ? void 0 : _p.email });
+    var _r, _s;
+    const userExist = yield user_1.default.findOne({ email: (_r = req.user) === null || _r === void 0 ? void 0 : _r.email });
     if (!userExist)
         res.status(400).send({ success: false });
     const user = yield user_1.default.findByIdAndUpdate(userExist === null || userExist === void 0 ? void 0 : userExist._id, {
         activation: true,
     }, { new: true });
-    return res.status(200).send((_q = req.user) === null || _q === void 0 ? void 0 : _q.email);
+    return res.status(200).send((_s = req.user) === null || _s === void 0 ? void 0 : _s.email);
 });
 exports.confirm = confirm;
 const emailresetpassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -256,10 +305,10 @@ const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 });
 exports.deleteUser = deleteUser;
 const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _r;
+    var _t;
     const { signedCookies = {} } = req;
     const { refreshToken } = signedCookies;
-    const user = yield user_1.default.findById((_r = req.user) === null || _r === void 0 ? void 0 : _r._id);
+    const user = yield user_1.default.findById((_t = req.user) === null || _t === void 0 ? void 0 : _t._id);
     const tokenIndex = user.refreshToken.findIndex((item) => item.refreshToken === refreshToken);
     if (tokenIndex !== -1) {
         user.refreshToken.id(user.refreshToken[tokenIndex]._id).remove();

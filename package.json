@@ -5,7 +5,6 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
-    "build": "tsc",
     "dev": "set NODE_ENV=development && concurrently \"tsc\" \"nodemon dist/index.js\"",
     "test": "set NODE_ENV=test && jest /src/tests/users"
   },
