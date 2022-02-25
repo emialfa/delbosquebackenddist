@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.logout = exports.deleteUser = exports.deleteTestUser = exports.emailresetpassword = exports.confirm = exports.emailconfirm = exports.refreshToken = exports.register = exports.loginFacebookAuth = exports.loginGoogleAuth = exports.login = exports.changepassword = exports.update = exports.getUserFromEmail = exports.getUserFromId = exports.getAllUsers = void 0;
 const user_1 = __importDefault(require("../models/user"));
+const cross_fetch_1 = __importDefault(require("cross-fetch"));
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const registerMail = require("../templates/registerMail");
@@ -158,7 +159,7 @@ const loginFacebookAuth = (req, res) => __awaiter(void 0, void 0, void 0, functi
     var _k, _l;
     const { accessToken, userID } = req.body;
     const URL = `https://graph.facebook.com/v2.9/${userID}/?fields=id,name,email,picture&access_token=${accessToken}`;
-    const data = yield fetch(URL).then(res => res.json()).then(res => { return res; });
+    const data = yield (0, cross_fetch_1.default)(URL).then((res) => res.json()).then((res) => { return res; });
     const { email, name } = data;
     const user = yield user_1.default.findOne({ email: email });
     if (user) {

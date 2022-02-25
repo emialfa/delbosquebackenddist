@@ -1,5 +1,6 @@
 import User from "../models/user";
 import { Request, Response } from "express";
+import fetch from 'cross-fetch';
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const registerMail = require("../templates/registerMail");
@@ -8,7 +9,6 @@ const passport = require("passport")
 const { getToken, COOKIE_OPTIONS, getRefreshToken, verifyUser } = require("../authenticate")
 const {google} = require('googleapis')
 const {OAuth2} = google.auth
-
 const client = new OAuth2(process.env.GOOGLE_EMAIL_CLIENT_ID)
 
 export const getAllUsers = async (req: Request, res: Response) => {
@@ -154,7 +154,7 @@ export const loginFacebookAuth = async (req: Request, res: Response) => {
 
   const URL = `https://graph.facebook.com/v2.9/${userID}/?fields=id,name,email,picture&access_token=${accessToken}`
   
-  const data:any = await fetch(URL).then(res => res.json()).then(res => {return res})
+  const data:any = await fetch(URL).then((res:any) => res.json()).then((res:any) => {return res})
 
   const {email, name} = data            
 
