@@ -1,4 +1,5 @@
 "use strict";
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const router = (0, express_1.Router)();
@@ -20,7 +21,9 @@ router.post("/refreshToken", users_1.refreshToken);
 router.post("/emailconfirm", verifyUser, users_1.emailconfirm);
 router.post("/confirm", verifyUser, users_1.confirm);
 router.post("/emailresetpassword", users_1.emailresetpassword);
-router.delete("/usertest", users_1.deleteTestUser);
 router.delete("/:id", verifyUser, authAdminJwt, users_1.deleteUser);
+if (((_a = process.env.NODE_ENV) === null || _a === void 0 ? void 0 : _a.trim()) === 'test') {
+    router.post("/deletetestuser", users_1.deleteTestUser);
+}
 module.exports = router;
 //# sourceMappingURL=users.js.map

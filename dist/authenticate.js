@@ -2,9 +2,10 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 const jwt = require("jsonwebtoken");
-const dev = process.env.NODE_ENV !== "production";
+const dev = ((_a = process.env.NODE_ENV) === null || _a === void 0 ? void 0 : _a.trim()) !== "production";
 const passport_1 = __importDefault(require("passport"));
 exports.COOKIE_OPTIONS = {
     httpOnly: true,

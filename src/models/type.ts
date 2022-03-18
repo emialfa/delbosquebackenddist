@@ -4,6 +4,7 @@ interface IType {
     name: string;
     icon?:string;
     color?:string;
+    categories?:string[]
 }
 
 const typeSchema = new Schema<IType>({
@@ -16,7 +17,10 @@ const typeSchema = new Schema<IType>({
     },
     color: { 
         type: String,
-    }
+    },
+    categories: [{
+        type: String
+    }]
 })
 
 

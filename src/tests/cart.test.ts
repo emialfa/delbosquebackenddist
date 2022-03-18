@@ -3,9 +3,8 @@ const supertest = require("supertest");
 const app = require("../app");
 const bcrypt = require('bcryptjs')
 import User from "../models/user";
-const jwt = require("jsonwebtoken");
 import "../database";
-import { createUserTest } from "./utils/create-usertest";
+const {getToken} = require("../authenticate")
 const {MONGODB_URI} = require('../helpers/config')
 const api = supertest(app)
 
@@ -22,33 +21,26 @@ beforeEach(async () => {
             cart: 'cartTest',
             favorites: [],
         })
-        const res = await newUser.save()
-        console.log(res)
-        token = jwt.sign(
-            {
-              userEmail: res.email,
-              isAdmin: res.isAdmin,
-            },
-            process.env.secret
-          );
+        token = getToken({ _id: newUser?._id })
+        await newUser.save()       
     }
 })
 
 test("cart are returned", async () => {
-  const response = await api.get("/api/v1/cart")
-  .set('authtoken', token)
+  const response = await api.get(process.env.TEST_API_URL + "/cart")
+  .set('Authorization', `Bearer ${token}`)
   .send();
   expect(response.body.cart).toBe('cartTest')
 });
 
 test("add to cart, then new cart are returned ", async () => {
-    const res = await api.post("/api/v1/cart")
-    .set('authtoken', token)
+    const res = await api.post(process.env.TEST_API_URL + "/cart")
+    .set('Authorization', `Bearer ${token}`)
     .send({
         cart: 'cartTestUpdated'
     });
-    const response = await api.get("/api/v1/cart")
-    .set('authtoken', token)
+    const response = await api.get(process.env.TEST_API_URL + "/cart")
+    .set('Authorization', `Bearer ${token}`)
     .send();
     expect(response.body.cart).toBe('cartTestUpdated')
   });

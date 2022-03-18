@@ -3,10 +3,11 @@ import {Request, Response} from 'express'
 const mercadopago = require ('mercadopago');
 import User from '../models/user';
 const orderConfirmMail = require("../templates/order-confirm")
+const {MERCADOPAGO_ACCESSTOKEN, _URL_} = require('../helpers/config');
 
 mercadopago.configure({
-    access_token: 'APP_USR-8352366877704564-122122-071839bb63d47195efaa44d0a4d64c6a-619410249'
-});
+    access_token: `${MERCADOPAGO_ACCESSTOKEN}`
+})
 
 export const getMyOrder = async (req: Request, res: Response) => {
     const userExist = await User.find({email: req.user?.email});
@@ -80,6 +81,7 @@ export const addMyOrder = async (req: Request,res: Response)=>{
 }
 
 export const mpprefenceid =  async (req: Request, res: Response)=> {
+    console.log(req.body)
     const orderFind = await Order.findOne({MPPreferenceId: req.body.MPPreferenceId})
     console.log(orderFind)
     const order = await Order.findByIdAndUpdate(
@@ -113,9 +115,9 @@ export const addPayment = async (req: Request,res: Response)=>{
     let preference:{items:object[];back_urls:object;auto_return:string} = {
         items:[],
         back_urls: {
-            success: `${process.env.URL}/feedback/success`,
-            failure: `${process.env.URL}/feedback/failure`,
-            pending: `${process.env.URL}/feedback/pending`,
+            success: `${_URL_}/order/resultmp`,
+            failure: `${_URL_}/order/resultmp`,
+            pending: `${_URL_}/order/resultmp`,
           },
           auto_return: "approved",
       };

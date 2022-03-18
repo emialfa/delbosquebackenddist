@@ -26,10 +26,12 @@ const initialTypes = [
         name: "test1",
         icon: '',
         color: '',
+        categories: ['testCategory1']
     }, {
         name: "test2",
         icon: '',
         color: '',
+        categories: ['test2Category1']
     }
 ];
 beforeEach(() => __awaiter(void 0, void 0, void 0, function* () {
@@ -43,52 +45,47 @@ beforeEach(() => __awaiter(void 0, void 0, void 0, function* () {
     }
 }));
 test("all types are returned", () => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield api.get("/api/v1/types").send();
-    console.log(response.body);
+    const response = yield api.get(process.env.TEST_API_URL + "/types").send();
     expect(response.body).toHaveLength(initialTypes.length);
 }));
 test('add type, then all types and new type are returned', () => __awaiter(void 0, void 0, void 0, function* () {
-    yield api.post('/api/v1/types')
-        .set('authtoken', token)
+    yield api.post(process.env.TEST_API_URL + '/types')
+        .set('Authorization', `Bearer ${token}`)
         .send({
         name: "test3",
         icon: '',
         color: '',
     })
         .expect(200);
-    const response = yield api.get("/api/v1/types").send();
-    console.log(response.body);
+    const response = yield api.get(process.env.TEST_API_URL + "/types").send();
     expect(response.body).toHaveLength(initialTypes.length + 1);
 }));
 test('update name of type, then new name of type are returned', () => __awaiter(void 0, void 0, void 0, function* () {
-    const res = yield api.get("/api/v1/types").send();
-    yield api.put('/api/v1/types/' + res.body[1]._id)
-        .set('authtoken', token)
+    const res = yield api.get(process.env.TEST_API_URL + "/types").send();
+    yield api.put(process.env.TEST_API_URL + '/types/' + res.body[1]._id)
+        .set('Authorization', `Bearer ${token}`)
         .send({
         name: "test2updated",
         icon: '',
         color: '',
     })
         .expect(200);
-    const response = yield api.get("/api/v1/types").send();
-    console.log(response.body);
+    const response = yield api.get(process.env.TEST_API_URL + "/types").send();
     expect(response.body[1].name).toBe("test2updated");
 }));
 test('delete type, then all types less one are returned', () => __awaiter(void 0, void 0, void 0, function* () {
-    const res = yield api.get("/api/v1/types").send();
-    yield api.delete('/api/v1/types/' + res.body[1]._id)
-        .set('authtoken', token)
+    const res = yield api.get(process.env.TEST_API_URL + "/types").send();
+    yield api.delete(process.env.TEST_API_URL + '/types/' + res.body[1]._id)
+        .set('Authorization', `Bearer ${token}`)
         .expect(200);
-    const response = yield api.get("/api/v1/types").send();
-    console.log(response.body);
+    const response = yield api.get(process.env.TEST_API_URL + "/types").send();
     expect(response.body).toHaveLength(initialTypes.length - 1);
 }));
 test('wrong id return status 500, and without modification', () => __awaiter(void 0, void 0, void 0, function* () {
-    yield api.delete('/api/v1/types/134567')
-        .set('authtoken', token)
+    yield api.delete(process.env.TEST_API_URL + '/types/134567')
+        .set('Authorization', `Bearer ${token}`)
         .expect(500);
-    const response = yield api.get("/api/v1/types").send();
-    console.log(response.body);
+    const response = yield api.get(process.env.TEST_API_URL + "/types").send();
     expect(response.body).toHaveLength(initialTypes.length);
 }));
 afterAll(() => {

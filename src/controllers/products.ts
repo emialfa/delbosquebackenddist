@@ -65,6 +65,8 @@ export const addProduct = async (req: Request, res: Response) => {
   }
   let product = new Product({
     ...req.body,
+    price: Number(req.body.price),
+    countInStock: Number(req.body.countInStock),
     image: arr[0],
     images: arr.length > 1 ? arr.filter((i, indice) => indice !== 0) : [],
   });

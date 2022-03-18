@@ -16,6 +16,8 @@ const initialProducts = [
         category: 'test',
         type: 'test',
         countInStock: 50,
+        image: 'https://res.cloudinary.com/delbosque-tienda/image/upload/v1626594479/bdi8e10t2sq4ypf3e9h3.jpg',
+        price: 30
     },
     {
         name: 'test2',
@@ -23,6 +25,8 @@ const initialProducts = [
         category: 'test',
         type: 'test',
         countInStock: 50,
+        image:'https://res.cloudinary.com/delbosque-tienda/image/upload/v1626594479/bdi8e10t2sq4ypf3e9h3.jpg',
+        price: 30
     }
 ]
 
@@ -38,14 +42,14 @@ beforeEach(async () => {
 })
 
 test("all products are returned", async () => {
-  const response = await api.get("/api/v1/products").send();
+  const response = await api.get(process.env.TEST_API_URL + "/products").send();
   console.log(response.body);
   expect(response.body).toHaveLength(initialProducts.length)
 });
 
 test('add product, then all products and new type are returned', async () => {
-    await api.post('/api/v1/products') 
-    .set('authtoken', token)
+    await api.post(process.env.TEST_API_URL + '/products') 
+    .set('Authorization', `Bearer ${token}`)
     .send({
         name: 'test2',
         description: 'test2',
@@ -54,30 +58,30 @@ test('add product, then all products and new type are returned', async () => {
         countInStock: 50,
     })
     .expect(200)
-    const response = await api.get("/api/v1/products").send();
+    const response = await api.get(process.env.TEST_API_URL + "/products").send();
     console.log(response.body);
     expect(response.body).toHaveLength(initialProducts.length+1)
 })
 
 test('update name of product, then new name of product are returned', async () => {
-    const res = await api.get("/api/v1/products").send();
-    await api.put('/api/v1/products/'+res.body[1]._id) 
-    .set('authtoken', token)
+    const res = await api.get(process.env.TEST_API_URL + "/products").send();
+    await api.put(process.env.TEST_API_URL + '/products/'+res.body[1]._id) 
+    .set('Authorization', `Bearer ${token}`)
     .send({
         name: "test2updated",
     })
     .expect(200)
-    const response = await api.get("/api/v1/products").send();
+    const response = await api.get(process.env.TEST_API_URL + "/products").send();
     console.log(response.body);
     expect(response.body[1].name).toBe("test2updated")
 })
 
 test('delete product, then all products less one are returned', async () => {
-    const res = await api.get("/api/v1/products").send();
-    await api.delete('/api/v1/products/'+res.body[1]._id) 
-    .set('authtoken', token)
+    const res = await api.get(process.env.TEST_API_URL + "/products").send();
+    await api.delete(process.env.TEST_API_URL + '/products/'+res.body[1]._id) 
+    .set('Authorization', `Bearer ${token}`)
     .expect(200)
-    const response = await api.get("/api/v1/products").send();
+    const response = await api.get(process.env.TEST_API_URL + "/products").send();
     console.log(response.body);
     expect(response.body).toHaveLength(initialProducts.length-1)
 })

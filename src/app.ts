@@ -7,7 +7,7 @@ import mercadopago from 'mercadopago';
 import fileUpload from 'express-fileupload';
 const cookieParser = require("cookie-parser")
 const passport = require("passport")
-const {PORT} = require('./helpers/config');
+const {PORT, API_URL, MERCADOPAGO_ACCESSTOKEN} = require('./helpers/config');
 const errorHandler = require('./helpers/error-handler')
 // settings
 app.set('port', PORT);
@@ -20,8 +20,8 @@ app.use(morgan('tiny'))
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser(process.env.COOKIE_SECRET))
-//Add the client URL to the CORS policy
 
+//Add the client URL to the CORS policy
 const whitelist = process.env.WHITELISTED_DOMAINS
   ? process.env.WHITELISTED_DOMAINS.split(",")
   : []
@@ -47,8 +47,8 @@ app.use(fileUpload({
     tempFileDir : '/tmp/',
 }));
 mercadopago.configure({
-    access_token: 'APP_USR-8352366877704564-122122-071839bb63d47195efaa44d0a4d64c6a-619410249'
-})
+    access_token: `${MERCADOPAGO_ACCESSTOKEN}`
+  })
 
 cloudinary.config({ 
     cloud_name: process.env.cloud_name, 
@@ -65,15 +65,14 @@ const ordersRoutes = require('./routes/orders');
 const favoritesRoutes = require('./routes/favorites');
 const cartRoutes = require('./routes/cart')
 const sucursalesCARoutes = require('./routes/sucursalesCA')
-const api = process.env.API_URL;
 
-app.use(`${api}/types`, typesRoutes);
-app.use(`${api}/categories`, categoriesRoutes);
-app.use(`${api}/products`, productsRoutes);
-app.use(`${api}/users`, usersRoutes);
-app.use(`${api}/favorites`, favoritesRoutes);
-app.use(`${api}/orders`, ordersRoutes);
-app.use(`${api}/cart`, cartRoutes)
-app.use(`${api}/sucursalesCA`, sucursalesCARoutes)
+app.use(`${API_URL}/types`, typesRoutes);
+app.use(`${API_URL}/categories`, categoriesRoutes);
+app.use(`${API_URL}/products`, productsRoutes);
+app.use(`${API_URL}/users`, usersRoutes);
+app.use(`${API_URL}/favorites`, favoritesRoutes);
+app.use(`${API_URL}/orders`, ordersRoutes);
+app.use(`${API_URL}/cart`, cartRoutes)
+app.use(`${API_URL}/sucursalesCA`, sucursalesCARoutes)
 
 module.exports = app;

@@ -11,7 +11,10 @@ const typeSchema = new mongoose_1.Schema({
     },
     color: {
         type: String,
-    }
+    },
+    categories: [{
+            type: String
+        }]
 });
 typeSchema.virtual('id').get(function () {
     return this._id.toHexString();

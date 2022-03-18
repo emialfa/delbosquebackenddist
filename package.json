@@ -4,10 +4,11 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "set NODE_ENV=production && node dist/index.js",
     "tsc": "tsc",
     "dev": "set NODE_ENV=development && concurrently \"tsc\" \"nodemon dist/index.js\"",
-    "test": "set NODE_ENV=test && jest /src/tests/users"
+    "test": "set NODE_ENV=test && jest /src/tests/products",
+    "test:front": "set NODE_ENV=test && node dist/index.js"
   },
   "keywords": [],
   "author": "",

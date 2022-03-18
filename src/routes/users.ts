@@ -4,7 +4,6 @@ const { authAdminJwt } = require("../helpers/jwt");
 import {
   changepassword,
   confirm,
-  deleteTestUser,
   deleteUser,
   emailconfirm,
   emailresetpassword,
@@ -17,7 +16,8 @@ import {
   register,
   refreshToken,
   update,
-  logout
+  logout,
+  deleteTestUser
 } from "../controllers/users";
 const passport = require("passport")
 const {verifyUser} = require("../authenticate")
@@ -50,8 +50,9 @@ router.post("/confirm", verifyUser, confirm);
 
 router.post("/emailresetpassword", emailresetpassword);
 
-router.delete("/usertest", deleteTestUser);
-
 router.delete("/:id", verifyUser, authAdminJwt, deleteUser);
 
+if(process.env.NODE_ENV?.trim() === 'test'){
+  router.post("/deletetestuser", deleteTestUser)
+}
 module.exports = router;

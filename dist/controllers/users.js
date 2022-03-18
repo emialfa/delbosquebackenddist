@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logout = exports.deleteUser = exports.deleteTestUser = exports.emailresetpassword = exports.confirm = exports.emailconfirm = exports.refreshToken = exports.register = exports.loginFacebookAuth = exports.loginGoogleAuth = exports.login = exports.changepassword = exports.update = exports.getUserFromEmail = exports.getUserFromId = exports.getAllUsers = void 0;
+exports.deleteTestUser = exports.logout = exports.deleteUser = exports.emailresetpassword = exports.confirm = exports.emailconfirm = exports.refreshToken = exports.register = exports.loginFacebookAuth = exports.loginGoogleAuth = exports.login = exports.changepassword = exports.update = exports.getUserFromEmail = exports.getUserFromId = exports.getAllUsers = void 0;
 const user_1 = __importDefault(require("../models/user"));
 const cross_fetch_1 = __importDefault(require("cross-fetch"));
 const bcrypt = require("bcryptjs");
@@ -62,7 +62,7 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     else {
         return res.status(400).send("contraseña incorrecta");
     }
-    const user = yield user_1.default.findByIdAndUpdate(userExist._id, Object.assign({}, req.body), { new: true });
+    const user = yield user_1.default.findByIdAndUpdate(userExist._id, Object.assign(Object.assign({}, req.body), { passwordHash: newPassword }), { new: true });
     if (!user)
         return res.status(400).send({ success: false });
     return res.status(200).send(user);
@@ -288,16 +288,6 @@ const emailresetpassword = (req, res) => __awaiter(void 0, void 0, void 0, funct
     return res.status(200).send({ success: false, mailResponse });
 });
 exports.emailresetpassword = emailresetpassword;
-const deleteTestUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const userTest = yield user_1.default.findOne({ email: "test@test.com" });
-    if (!userTest)
-        return res.status(400).json({ success: false });
-    const userDeleteRes = yield user_1.default.findByIdAndRemove(userTest._id);
-    if (!userDeleteRes)
-        return res.status(400).json({ success: false, message: "The user cannot be deleted." });
-    return res.status(200).json({ success: true, message: "The user is deleted!" });
-});
-exports.deleteTestUser = deleteTestUser;
 const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userDeleteRes = yield user_1.default.findByIdAndRemove(req.params.id);
     if (!userDeleteRes)
@@ -319,4 +309,12 @@ const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.send({ success: true });
 });
 exports.logout = logout;
+const deleteTestUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userExist = yield user_1.default.findOne({ email: req.body.email });
+    const userDeleteRes = yield user_1.default.findByIdAndRemove(userExist === null || userExist === void 0 ? void 0 : userExist._id);
+    if (!userDeleteRes)
+        return res.status(400).json({ success: false, message: "The user cannot be deleted!" });
+    return res.status(200).json({ success: true, message: "The user is deleted!" });
+});
+exports.deleteTestUser = deleteTestUser;
 //# sourceMappingURL=users.js.map

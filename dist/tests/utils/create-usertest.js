@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createUserTest = void 0;
 const user_1 = __importDefault(require("../../models/user"));
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const { getToken } = require("../../authenticate");
 const initialUser = {
     name: "testUser",
     email: "test@test.com",
@@ -36,11 +36,8 @@ const initialUser = {
 const createUserTest = () => __awaiter(void 0, void 0, void 0, function* () {
     yield user_1.default.deleteMany({});
     const newUser = new user_1.default(initialUser);
+    const token = getToken({ _id: newUser === null || newUser === void 0 ? void 0 : newUser._id });
     yield newUser.save();
-    const token = jwt.sign({
-        userEmail: initialUser.email,
-        isAdmin: initialUser.isAdmin,
-    }, process.env.secret);
     return token;
 });
 exports.createUserTest = createUserTest;

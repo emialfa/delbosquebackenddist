@@ -18,8 +18,8 @@ const app = require("../app");
 const bcrypt = require('bcryptjs');
 const user_1 = __importDefault(require("../models/user"));
 const product_1 = __importDefault(require("../models/product"));
-const jwt = require("jsonwebtoken");
 require("../database");
+const { getToken } = require("../authenticate");
 const { MONGODB_URI } = require('../helpers/config');
 const api = supertest(app);
 let token;
@@ -44,29 +44,25 @@ beforeEach(() => __awaiter(void 0, void 0, void 0, function* () {
             favorites: [product._id + ""],
         });
         idFavorite = product._id + '';
+        token = getToken({ _id: newUser === null || newUser === void 0 ? void 0 : newUser._id });
         const res = yield newUser.save();
-        console.log(res);
-        token = jwt.sign({
-            userEmail: res.email,
-            isAdmin: res.isAdmin,
-        }, process.env.secret);
     }
 }));
-test("cart are returned", () => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield api.get("/api/v1/favorites")
-        .set('authtoken', token)
+test("favorites are returned", () => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield api.get(process.env.TEST_API_URL + "/favorites")
+        .set('Authorization', `Bearer ${token}`)
         .send();
     console.log(response.body);
     expect(response.body.favorites[0] + '').toBe(idFavorite);
 }));
-test("remove to cart, then new cart are returned ", () => __awaiter(void 0, void 0, void 0, function* () {
-    const res = yield api.post("/api/v1/favorites")
-        .set('authtoken', token)
+test("remove to favorites, then new favorites are returned ", () => __awaiter(void 0, void 0, void 0, function* () {
+    const res = yield api.post(process.env.TEST_API_URL + "/favorites")
+        .set('Authorization', `Bearer ${token}`)
         .send({
         favorites: []
     });
-    const response = yield api.get("/api/v1/favorites")
-        .set('authtoken', token)
+    const response = yield api.get(process.env.TEST_API_URL + "/favorites")
+        .set('Authorization', `Bearer ${token}`)
         .send();
     expect(response.body.favorites).toHaveLength(0);
 }));

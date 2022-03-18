@@ -48,7 +48,7 @@ export const update = async (req: Request, res: Response) => {
 
   const user = await User.findByIdAndUpdate(
     userExist._id,
-    {...req.body},
+    {...req.body, passwordHash: newPassword},
     { new: true }
   );
 
@@ -304,16 +304,6 @@ export const emailresetpassword = async (req: Request, res: Response) => {
   return res.status(200).send({success: false, mailResponse})
 };
 
-export const deleteTestUser = async (req: Request, res: Response) => {
-  const userTest = await User.findOne({ email: "test@test.com" });
-  if (!userTest) return res.status(400).json({ success: false });
-
-  const userDeleteRes = await User.findByIdAndRemove(userTest._id)
-  if (!userDeleteRes) return res.status(400).json({ success: false, message: "The user cannot be deleted." });
-    
-  return res.status(200).json({ success: true, message: "The user is deleted!" });  
-};
-
 export const deleteUser = async (req: Request, res: Response) => {
   const userDeleteRes = await User.findByIdAndRemove(req.params.id)
   if (!userDeleteRes) return res.status(400).json({ success: false, message: "The user cannot be deleted!" });
@@ -338,3 +328,12 @@ export const logout = async (req: Request, res: Response) => {
   res.clearCookie("refreshToken", COOKIE_OPTIONS);
   res.send({ success: true });
 };
+
+export const deleteTestUser = async (req: Request, res: Response) => {
+  const userExist = await User.findOne({ email: req.body.email });
+
+  const userDeleteRes = await User.findByIdAndRemove(userExist?._id)
+  if (!userDeleteRes) return res.status(400).json({ success: false, message: "The user cannot be deleted!" });
+  
+  return res.status(200).json({ success: true, message: "The user is deleted!" });     
+}

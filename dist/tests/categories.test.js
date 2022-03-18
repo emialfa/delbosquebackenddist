@@ -43,51 +43,51 @@ beforeEach(() => __awaiter(void 0, void 0, void 0, function* () {
     }
 }));
 test("all categories are returned", () => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield api.get("/api/v1/categories").send();
+    const response = yield api.get(process.env.TEST_API_URL + "/categories").send();
     console.log(response.body);
     expect(response.body).toHaveLength(initialCategories.length);
 }));
 test('add category, then all categories and new type are returned', () => __awaiter(void 0, void 0, void 0, function* () {
-    yield api.post('/api/v1/categories')
-        .set('authtoken', token)
+    yield api.post(process.env.TEST_API_URL + '/categories')
+        .set('Authorization', `Bearer ${token}`)
         .send({
         name: "test3",
         icon: '',
         color: '',
     })
         .expect(200);
-    const response = yield api.get("/api/v1/categories").send();
+    const response = yield api.get(process.env.TEST_API_URL + "/categories").send();
     console.log(response.body);
     expect(response.body).toHaveLength(initialCategories.length + 1);
 }));
 test('update name of category, then new name of category are returned', () => __awaiter(void 0, void 0, void 0, function* () {
-    const res = yield api.get("/api/v1/categories").send();
-    yield api.put('/api/v1/categories/' + res.body[1]._id)
-        .set('authtoken', token)
+    const res = yield api.get(process.env.TEST_API_URL + "/categories").send();
+    yield api.put(process.env.TEST_API_URL + '/categories/' + res.body[1]._id)
+        .set('Authorization', `Bearer ${token}`)
         .send({
         name: "test2updated",
         icon: '',
         color: '',
     })
         .expect(200);
-    const response = yield api.get("/api/v1/categories").send();
+    const response = yield api.get(process.env.TEST_API_URL + "/categories").send();
     console.log(response.body);
     expect(response.body[1].name).toBe("test2updated");
 }));
 test('delete category, then all categories less one are returned', () => __awaiter(void 0, void 0, void 0, function* () {
-    const res = yield api.get("/api/v1/categories").send();
-    yield api.delete('/api/v1/categories/' + res.body[1]._id)
-        .set('authtoken', token)
+    const res = yield api.get(process.env.TEST_API_URL + "/categories").send();
+    yield api.delete(process.env.TEST_API_URL + '/categories/' + res.body[1]._id)
+        .set('Authorization', `Bearer ${token}`)
         .expect(200);
-    const response = yield api.get("/api/v1/categories").send();
+    const response = yield api.get(process.env.TEST_API_URL + "/categories").send();
     console.log(response.body);
     expect(response.body).toHaveLength(initialCategories.length - 1);
 }));
 test('wrong id return status 500, and without modification', () => __awaiter(void 0, void 0, void 0, function* () {
-    yield api.delete('/api/v1/categories/134567')
-        .set('authtoken', token)
+    yield api.delete(process.env.TEST_API_URL + '/categories/134567')
+        .set('Authorization', `Bearer ${token}`)
         .expect(500);
-    const response = yield api.get("/api/v1/categories").send();
+    const response = yield api.get(process.env.TEST_API_URL + "/categories").send();
     console.log(response.body);
     expect(response.body).toHaveLength(initialCategories.length);
 }));

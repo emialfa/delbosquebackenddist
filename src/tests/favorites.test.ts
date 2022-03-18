@@ -4,9 +4,10 @@ const app = require("../app");
 const bcrypt = require('bcryptjs')
 import User from "../models/user";
 import Product from "../models/product";
-const jwt = require("jsonwebtoken");
 import "../database";
+const {getToken} = require("../authenticate")
 const {MONGODB_URI} = require('../helpers/config')
+
 const api = supertest(app)
 
 let token:string;
@@ -32,34 +33,27 @@ beforeEach(async () => {
             favorites: [product._id+""],
         })
         idFavorite = product._id+''
+        token = getToken({ _id: newUser?._id })
         const res = await newUser.save()
-        console.log(res)
-        token = jwt.sign(
-            {
-              userEmail: res.email,
-              isAdmin: res.isAdmin,
-            },
-            process.env.secret
-          );
     }
 })
 
-test("cart are returned", async () => {
-  const response = await api.get("/api/v1/favorites")
-  .set('authtoken', token)
+test("favorites are returned", async () => {
+  const response = await api.get(process.env.TEST_API_URL + "/favorites")
+  .set('Authorization', `Bearer ${token}`)
   .send();
   console.log(response.body)
   expect(response.body.favorites[0]+'').toBe(idFavorite)
 });
 
-test("remove to cart, then new cart are returned ", async () => {
-    const res = await api.post("/api/v1/favorites")
-    .set('authtoken', token)
+test("remove to favorites, then new favorites are returned ", async () => {
+    const res = await api.post(process.env.TEST_API_URL + "/favorites")
+    .set('Authorization', `Bearer ${token}`)
     .send({
         favorites: []
     });
-    const response = await api.get("/api/v1/favorites")
-    .set('authtoken', token)
+    const response = await api.get(process.env.TEST_API_URL + "/favorites")
+    .set('Authorization', `Bearer ${token}`)
     .send();
     expect(response.body.favorites).toHaveLength(0)
   });

@@ -39,51 +39,51 @@ beforeEach(async () => {
 })
 
 test("all users are returned", async () => {
-  const response = await api.get("/api/v1/users/all")
-  .set('authtoken', token)
+  const response = await api.get(process.env.TEST_API_URL + "/users/all")
+  .set('Authorization', `Bearer ${token}`)
   .send()
   expect(response.body).toHaveLength(initialUsers.length)
 });
 
 test('register user, then all users and new type are returned', async () => {
-    await api.post('/api/v1/users/register') 
+    await api.post(process.env.TEST_API_URL + '/users/register') 
     .send({
        ...initialUsers[0], name: "testUser3", email: "test3@test.com", password: "test1234"
     })
     .expect(200)
-    const response = await api.get("/api/v1/users/all")
-    .set('authtoken', token)
+    const response = await api.get(process.env.TEST_API_URL + "/users/all")
+    .set('Authorization', `Bearer ${token}`)
     .send();
     expect(response.body).toHaveLength(initialUsers.length+1)
 })
 
 test('update name of user, then new name of user are returned', async () => {
-    const res = await api.post("/api/v1/users/login")
+    const res = await api.post(process.env.TEST_API_URL + "/users/login")
     .send({
         email: initialUsers[1].email,
         password: "test1234"
     })
-    const resUpdate = await api.put('/api/v1/users/update') 
-    .set('authtoken', res.body.token)
+    await api.put(process.env.TEST_API_URL + '/users/update') 
+    .set('Authorization', `Bearer ${res.body.token}`)
     .send({
         name: "testUser2updated"
     })
     .expect(200)
-    const response = await api.get("/api/v1/users/all")
-    .set('authtoken', token)
+    const response = await api.get(process.env.TEST_API_URL + "/users/all")
+    .set('Authorization', `Bearer ${token}`)
     .send();    
     expect(response.body[1].name).toBe("testUser2updated")
 })
 
 test('delete user, then all users less one are returned', async () => {
-    const res = await api.get("/api/v1/users/all")
-    .set('authtoken', token)
+    const res = await api.get(process.env.TEST_API_URL + "/users/all")
+    .set('Authorization', `Bearer ${token}`)
     .send();    
-    await api.delete('/api/v1/users/'+res.body[1]._id) 
-    .set('authtoken', token)
+    await api.delete(process.env.TEST_API_URL + '/users/'+res.body[1]._id) 
+    .set('Authorization', `Bearer ${token}`)
     .expect(200)
-    const response = await api.get("/api/v1/users/all")
-    .set('authtoken', token)
+    const response = await api.get(process.env.TEST_API_URL + "/users/all")
+    .set('Authorization', `Bearer ${token}`)
     .send();    
     expect(response.body).toHaveLength(initialUsers.length-1)
 })

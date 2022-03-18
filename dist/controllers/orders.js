@@ -17,8 +17,9 @@ const order_1 = __importDefault(require("../models/order"));
 const mercadopago = require('mercadopago');
 const user_1 = __importDefault(require("../models/user"));
 const orderConfirmMail = require("../templates/order-confirm");
+const { MERCADOPAGO_ACCESSTOKEN, _URL_ } = require('../helpers/config');
 mercadopago.configure({
-    access_token: 'APP_USR-8352366877704564-122122-071839bb63d47195efaa44d0a4d64c6a-619410249'
+    access_token: `${MERCADOPAGO_ACCESSTOKEN}`
 });
 const getMyOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
@@ -87,6 +88,7 @@ const addMyOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 });
 exports.addMyOrder = addMyOrder;
 const mpprefenceid = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(req.body);
     const orderFind = yield order_1.default.findOne({ MPPreferenceId: req.body.MPPreferenceId });
     console.log(orderFind);
     const order = yield order_1.default.findByIdAndUpdate(orderFind === null || orderFind === void 0 ? void 0 : orderFind._id, {
@@ -109,9 +111,9 @@ const addPayment = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     let preference = {
         items: [],
         back_urls: {
-            success: `${process.env.URL}/feedback/success`,
-            failure: `${process.env.URL}/feedback/failure`,
-            pending: `${process.env.URL}/feedback/pending`,
+            success: `${_URL_}/order/resultmp`,
+            failure: `${_URL_}/order/resultmp`,
+            pending: `${_URL_}/order/resultmp`,
         },
         auto_return: "approved",
     };

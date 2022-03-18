@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken")
-const dev = process.env.NODE_ENV !== "production"
+const dev = process.env.NODE_ENV?.trim()  !== "production"
 import passport from "passport"
 
 exports.COOKIE_OPTIONS = {

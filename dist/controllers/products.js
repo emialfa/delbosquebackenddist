@@ -75,7 +75,7 @@ const addProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     if (arr.indexOf(cloudinaryFiles_1.urlDefaultImage) >= 0 && arr.length > 1) {
         arr.shift();
     }
-    let product = new product_1.default(Object.assign(Object.assign({}, req.body), { image: arr[0], images: arr.length > 1 ? arr.filter((i, indice) => indice !== 0) : [] }));
+    let product = new product_1.default(Object.assign(Object.assign({}, req.body), { price: Number(req.body.price), countInStock: Number(req.body.countInStock), image: arr[0], images: arr.length > 1 ? arr.filter((i, indice) => indice !== 0) : [] }));
     product = yield product.save();
     if (!product)
         return res.status(400).send({ success: false, message: "The product cannot be created" });

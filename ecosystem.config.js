@@ -1,6 +1,6 @@
 module.exports = {
     apps : [{
-        name   : "app1",
+        name   : "delbosquebordados.tienda-backend",
         script : "./dist/index.js",
         log_date_format: "YYYY-MM-DD HH:mm Z",
         error_file: "./logs/logs-error",

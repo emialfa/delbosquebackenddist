@@ -1,6 +1,6 @@
 import User from "../../models/user";
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const {getToken} = require("../../authenticate")
 
 const initialUser = {
   name: "testUser",
@@ -23,13 +23,7 @@ const initialUser = {
 export const createUserTest = async () => {
   await User.deleteMany({});
   const newUser = new User(initialUser);
+  const token = getToken({ _id: newUser?._id })
   await newUser.save();
-  const token = jwt.sign(
-    {
-      userEmail: initialUser.email,
-      isAdmin: initialUser.isAdmin,
-    },
-    process.env.secret
-  );
   return token ;
 };
