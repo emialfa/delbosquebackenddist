@@ -9,6 +9,8 @@ const passport = require("passport");
 const { verifyUser } = require("../authenticate");
 router.get("/all", verifyUser, authAdminJwt, users_1.getAllUsers);
 router.get("/logout", verifyUser, users_1.logout);
+router.get("/get/count", verifyUser, authAdminJwt, users_1.countUsers);
+router.get("/get/week", verifyUser, authAdminJwt, users_1.getUsersWeek);
 router.get("/:id", verifyUser, users_1.getUserFromId);
 router.get("/", verifyUser, users_1.getUserFromEmail);
 router.put("/update", verifyUser, users_1.update);

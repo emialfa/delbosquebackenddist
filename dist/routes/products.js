@@ -10,5 +10,6 @@ router.get("/:id", products_1.getProduct);
 router.post("/", verifyUser, authAdminJwt, products_1.addProduct);
 router.put("/:id", verifyUser, authAdminJwt, products_1.updateProduct);
 router.delete("/:id", verifyUser, authAdminJwt, products_1.deleteProduct);
+router.get(`/get/featuredproducts`, products_1.featuredProducts);
 module.exports = router;
 //# sourceMappingURL=products.js.map

@@ -17,6 +17,10 @@ router.put('/:id', orders_1.updateOrder);
 router.delete('/:id', orders_1.deleteOrder);
 router.post('/payment', orders_1.addPayment);
 router.get("/feedback", orders_1.feedback);
-router.get(`/get/count`, orders_1.getCount);
+router.get(`/get/count`, orders_1.getOrdersCount);
+router.get(`/get/week`, orders_1.getOrdersWeek);
+router.get(`/get/day`, orders_1.getOrdersDay);
+router.get(`/get/revenues`, orders_1.getRevenues);
+router.get(`/get/sixmonths`, orders_1.getOrdersMonths);
 module.exports = router;
 //# sourceMappingURL=orders.js.map

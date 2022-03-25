@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteTestUser = exports.logout = exports.deleteUser = exports.emailresetpassword = exports.confirm = exports.emailconfirm = exports.refreshToken = exports.register = exports.loginFacebookAuth = exports.loginGoogleAuth = exports.login = exports.changepassword = exports.update = exports.getUserFromEmail = exports.getUserFromId = exports.getAllUsers = void 0;
+exports.getUsersWeek = exports.countUsers = exports.deleteTestUser = exports.logout = exports.deleteUser = exports.emailresetpassword = exports.confirm = exports.emailconfirm = exports.refreshToken = exports.register = exports.loginFacebookAuth = exports.loginGoogleAuth = exports.login = exports.changepassword = exports.update = exports.getUserFromEmail = exports.getUserFromId = exports.getAllUsers = void 0;
 const user_1 = __importDefault(require("../models/user"));
 const cross_fetch_1 = __importDefault(require("cross-fetch"));
 const bcrypt = require("bcryptjs");
@@ -317,4 +317,31 @@ const deleteTestUser = (req, res) => __awaiter(void 0, void 0, void 0, function*
     return res.status(200).json({ success: true, message: "The user is deleted!" });
 });
 exports.deleteTestUser = deleteTestUser;
+const countUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const usersCount = yield user_1.default.countDocuments();
+    if (!usersCount) {
+        res.status(500).json({ success: false });
+    }
+    res.send({
+        usersCount: usersCount,
+    });
+});
+exports.countUsers = countUsers;
+const getUsersWeek = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const usersWeek = yield user_1.default.find({
+        dateCreated: {
+            $gte: new Date(Date.now() - 7 * 60 * 60 * 24 * 1000)
+        }
+    }).select("orderItems");
+    const usersPrevWeek = yield user_1.default.find({
+        dateCreated: {
+            $gte: new Date(Date.now() - 14 * 60 * 60 * 24 * 1000), $lte: new Date(Date.now() - 7 * 60 * 60 * 24 * 1000)
+        }
+    }).select("orderItems");
+    let usersWeekTotal = usersWeek.length;
+    let usersPrevWeekTotal = usersPrevWeek.length;
+    const percent = usersPrevWeekTotal === 0 && usersWeekTotal === 0 ? 0 : usersPrevWeekTotal === 0 ? 100 : (usersWeekTotal > usersPrevWeekTotal ? usersWeekTotal : usersPrevWeekTotal) * 100 / (usersWeekTotal < usersPrevWeekTotal ? usersWeekTotal : usersPrevWeekTotal);
+    res.status(200).send({ percent: `${usersWeekTotal >= usersPrevWeekTotal ? '' : '-'}${percent}` });
+});
+exports.getUsersWeek = getUsersWeek;
 //# sourceMappingURL=users.js.map

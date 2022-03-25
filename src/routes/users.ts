@@ -17,7 +17,9 @@ import {
   refreshToken,
   update,
   logout,
-  deleteTestUser
+  deleteTestUser,
+  countUsers,
+  getUsersWeek
 } from "../controllers/users";
 const passport = require("passport")
 const {verifyUser} = require("../authenticate")
@@ -25,6 +27,10 @@ const {verifyUser} = require("../authenticate")
 router.get("/all", verifyUser, authAdminJwt, getAllUsers);
 
 router.get("/logout", verifyUser, logout);
+
+router.get("/get/count", verifyUser, authAdminJwt, countUsers)
+
+router.get("/get/week", verifyUser, authAdminJwt, getUsersWeek)
 
 router.get("/:id", verifyUser, getUserFromId);
 

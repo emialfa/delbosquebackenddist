@@ -19,6 +19,7 @@ interface IUser {
     refreshToken?: ISession[];
     authStrategy?: string;
     _id?: string;
+    dateCreated: Date;
 }
 
 interface ISession {
@@ -94,8 +95,11 @@ const userSchema = new Schema<IUser>({
       },
     favorites:  [{
         type: Schema.Types.ObjectId,
-        ref: 'Product',
     }],
+    dateCreated: {
+        type: Date,
+        default: Date.now,
+    }
 });
 
 userSchema.virtual('id').get(function (this: {_id: Types.ObjectId}) {

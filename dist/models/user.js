@@ -70,8 +70,11 @@ const userSchema = new mongoose_1.Schema({
     },
     favorites: [{
             type: mongoose_1.Schema.Types.ObjectId,
-            ref: 'Product',
         }],
+    dateCreated: {
+        type: Date,
+        default: Date.now,
+    }
 });
 userSchema.virtual('id').get(function () {
     return this._id.toHexString();

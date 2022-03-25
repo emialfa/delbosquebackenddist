@@ -1,4 +1,4 @@
-import { addMyOrder, addPayment, deleteOrder, feedback, getAllMyOrders, getAllOrders, getCount, getMyOrder, getOrder, mpnotification, mpprefenceid, mpwebhooks, updateOrder } from '../controllers/orders';
+import { addMyOrder, addPayment, deleteOrder, feedback, getAllMyOrders, getAllOrders,  getMyOrder, getOrder, getOrdersCount, getOrdersDay, getOrdersMonths, getOrdersWeek, getRevenues, mpnotification, mpprefenceid, mpwebhooks, updateOrder } from '../controllers/orders';
 import {Router} from 'express';
 const router = Router();
 const { authJwt, authAdminJwt } = require("../helpers/jwt");
@@ -28,6 +28,14 @@ router.post('/payment', addPayment)
 
 router.get("/feedback", feedback)
 
-router.get(`/get/count`, getCount)
+router.get(`/get/count`, getOrdersCount)
+
+router.get(`/get/week`, getOrdersWeek)
+
+router.get(`/get/day`, getOrdersDay)
+
+router.get(`/get/revenues`, getRevenues)
+
+router.get(`/get/sixmonths`, getOrdersMonths)
 
 module.exports = router;

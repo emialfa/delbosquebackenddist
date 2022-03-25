@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import Product from "../models/product";
 import { removeFileToCloudinary, uploadFiletoCloudinary, urlDefaultImage } from "../helpers/cloudinaryFiles";
 import {UploadedFile} from "express-fileupload";
+import Order from '../models/order';
+import User from "../models/user";
 
 export const getProducts = async (req: Request, res: Response) => {
     if (req.query.type && req.query.category) {
@@ -143,3 +145,20 @@ export const deleteProduct = async (req: Request, res: Response) => {
       
   return res.status(200).json({ success: true, message: "the product is deleted!" });  
 };
+
+export const featuredProducts = async (req: Request, res: Response) => {
+  const products: any[] = []
+  const orders = await Order.find()
+  orders.forEach(o => JSON.parse(o.orderItems).cart.forEach((p: any) => products.push({_id: p._id, quantity: p.quantity})))
+  const userList = await User.find().select("favorites");
+  userList.forEach((u: any) => u.favorites.forEach((p: any) => products.push({_id: p, quantity: 1})))
+  const productsCount:any = {}
+  products.forEach((p: any) => productsCount[p._id] = !productsCount[p._id] ? p.quantity : productsCount[p._id] += p.quantity)
+  const allProducts = await Product.find();
+  const sortedProducts = Object.keys(productsCount)
+    .map(p => ({_id: p, quantity: productsCount[p]}))
+    .sort((a,b) => b.quantity - a.quantity)
+  const allFeaturedProducts = sortedProducts.map((p: any) => allProducts.find(prod => prod._id.toString() === p._id)).filter(elem => elem)
+
+  res.status(200).json(allFeaturedProducts)
+}

@@ -12,9 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteProduct = exports.updateProduct = exports.addProduct = exports.getProduct = exports.getProducts = void 0;
+exports.featuredProducts = exports.deleteProduct = exports.updateProduct = exports.addProduct = exports.getProduct = exports.getProducts = void 0;
 const product_1 = __importDefault(require("../models/product"));
 const cloudinaryFiles_1 = require("../helpers/cloudinaryFiles");
+const order_1 = __importDefault(require("../models/order"));
+const user_1 = __importDefault(require("../models/user"));
 const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (req.query.type && req.query.category) {
         const filter = `${req.query.category}`.replace("+", " ");
@@ -139,4 +141,20 @@ const deleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     return res.status(200).json({ success: true, message: "the product is deleted!" });
 });
 exports.deleteProduct = deleteProduct;
+const featuredProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const products = [];
+    const orders = yield order_1.default.find();
+    orders.forEach(o => JSON.parse(o.orderItems).cart.forEach((p) => products.push({ _id: p._id, quantity: p.quantity })));
+    const userList = yield user_1.default.find().select("favorites");
+    userList.forEach((u) => u.favorites.forEach((p) => products.push({ _id: p, quantity: 1 })));
+    const productsCount = {};
+    products.forEach((p) => productsCount[p._id] = !productsCount[p._id] ? p.quantity : productsCount[p._id] += p.quantity);
+    const allProducts = yield product_1.default.find();
+    const sortedProducts = Object.keys(productsCount)
+        .map(p => ({ _id: p, quantity: productsCount[p] }))
+        .sort((a, b) => b.quantity - a.quantity);
+    const allFeaturedProducts = sortedProducts.map((p) => allProducts.find(prod => prod._id.toString() === p._id)).filter(elem => elem);
+    res.status(200).json(allFeaturedProducts);
+});
+exports.featuredProducts = featuredProducts;
 //# sourceMappingURL=products.js.map

@@ -337,3 +337,30 @@ export const deleteTestUser = async (req: Request, res: Response) => {
   
   return res.status(200).json({ success: true, message: "The user is deleted!" });     
 }
+
+export const countUsers = async (req: Request, res: Response) => {
+  const usersCount = await User.countDocuments()
+  if(!usersCount) {
+      res.status(500).json({success: false})
+  } 
+  res.send({
+    usersCount: usersCount,
+  });
+}
+
+export const getUsersWeek = async (req: Request, res: Response) =>{
+  const usersWeek = await User.find({
+      dateCreated: {
+          $gte: new Date(Date.now() - 7 * 60 * 60 * 24 * 1000)
+      }
+  }).select("orderItems");
+  const usersPrevWeek = await User.find({
+      dateCreated: {
+          $gte: new Date(Date.now() - 14 * 60 * 60 * 24 * 1000), $lte: new Date(Date.now() - 7 * 60 * 60 * 24 * 1000)
+      }
+  }).select("orderItems");
+  let usersWeekTotal = usersWeek.length;
+  let usersPrevWeekTotal = usersPrevWeek.length;
+  const percent = usersPrevWeekTotal === 0 && usersWeekTotal === 0 ? 0 :  usersPrevWeekTotal === 0 ? 100 : (usersWeekTotal > usersPrevWeekTotal ? usersWeekTotal : usersPrevWeekTotal) * 100 / (usersWeekTotal < usersPrevWeekTotal ? usersWeekTotal : usersPrevWeekTotal) 
+  res.status(200).send({ percent: `${usersWeekTotal >= usersPrevWeekTotal ? '' : '-'}${percent}` });
+}

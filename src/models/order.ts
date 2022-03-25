@@ -1,6 +1,6 @@
 import { Schema, Types, model } from "mongoose";
 
-interface IOrderSchema {
+export interface IOrderSchema {
     orderItems: string;
     name: string;
     shippingAddress: string;

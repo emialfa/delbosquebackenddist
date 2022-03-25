@@ -1,4 +1,4 @@
-import Order from '../models/order';
+import Order, { IOrderSchema } from '../models/order';
 import {Request, Response} from 'express'
 const mercadopago = require ('mercadopago');
 import User from '../models/user';
@@ -163,10 +163,89 @@ export const deleteOrder =  async (req: Request, res: Response)=>{
     
 }
 
-export const getCount = async (req: Request, res: Response) =>{
-    const orderCount = await Order.countDocuments((count) => count)
+export const getOrdersCount = async (req: Request, res: Response) =>{
+    const orderCount = await Order.countDocuments()
     if(!orderCount) res.status(400).json({success: false})
-    
+
     res.status(200).send({ orderCount: orderCount });
 }
+export const getRevenues = async (req: Request, res: Response) =>{
+    const ordersWeek = await Order.find({
+        dateOrdered: {
+            $gte: new Date(Date.now() - 7 * 60 * 60 * 24 * 1000)
+        }
+    }).select("orderItems");
+    let ordersTotal = 0;
+    ordersWeek.map(o => ordersTotal += JSON.parse(o.orderItems).total)
 
+    res.status(200).send({ revenues: ordersTotal});
+}
+
+export const getOrdersWeek = async (req: Request, res: Response) =>{
+    const ordersWeek = await Order.find({
+        dateOrdered: {
+            $gte: new Date(Date.now() - 7 * 60 * 60 * 24 * 1000)
+        }
+    }).select("orderItems");
+    const ordersPrevWeek = await Order.find({
+        dateOrdered: {
+            $gte: new Date(Date.now() - 14 * 60 * 60 * 24 * 1000), $lte: new Date(Date.now() - 7 * 60 * 60 * 24 * 1000)
+        }
+    }).select("orderItems");
+    let ordersWeekTotal = 0;
+    let ordersPrevWeekTotal = 0;
+    ordersWeek.map(o => ordersWeekTotal += JSON.parse(o.orderItems).total)
+    ordersPrevWeek.map(o => ordersPrevWeekTotal += JSON.parse(o.orderItems).total)
+    const percent = ordersPrevWeekTotal === 0 && ordersWeekTotal === 0 ? 0 :  ordersPrevWeekTotal === 0 ? 100 : (ordersWeekTotal > ordersPrevWeekTotal ? ordersWeekTotal : ordersPrevWeekTotal) * 100 /  (ordersWeekTotal < ordersPrevWeekTotal ? ordersWeekTotal : ordersPrevWeekTotal) 
+    res.status(200).send({ percent: `${ordersWeekTotal >= ordersPrevWeekTotal ? '' : '-'}${percent}`, lastWeek: ordersWeekTotal - ordersPrevWeekTotal});
+}
+
+export const getOrdersDay = async (req: Request, res: Response) =>{
+    const ordersDay = await Order.find({
+        dateOrdered: {
+            $gte: new Date(new Date().toDateString())
+        }
+    }).select("orderItems");
+    const today =new Date(new Date().toDateString())
+    const ordersPrevDay = await Order.find({
+        dateOrdered: {
+            $gte: new Date(today.setDate(today.getDate()-1)), $lte:  new Date(new Date().toDateString())
+        }
+    }).select("orderItems");
+    let ordersDayTotal = 0;
+    let ordersPrevTotal = 0;
+    ordersDay.map(o => ordersDayTotal += JSON.parse(o.orderItems).total)
+    ordersPrevDay.map(o => ordersPrevTotal += JSON.parse(o.orderItems).total)
+    const percent = ordersPrevTotal === 0 ? 0 : ordersDayTotal * 100 / ordersPrevTotal;
+    res.status(200).send({ordersDayTotal: ordersDayTotal, percent: percent})
+}
+export const getOrdersMonths = async (req: Request, res: Response) =>{
+    const orderTotal:{month: string, total: number}[] = [
+        {month: '', total: 0},
+        {month: '', total: 0},
+        {month: '', total: 0},
+        {month: '', total: 0},
+        {month: '', total: 0},
+        {month: '', total: 0}
+    ];
+    for (let [indice, order] of orderTotal.entries()) {
+       const filter = indice < 1 ? {
+        $gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1), $lte: new Date()
+       } : {
+        $gte: new Date(new Date().getFullYear(), new Date().getMonth() - indice, 1), $lte: new Date(new Date().getFullYear(), new Date().getMonth() - (indice-1), 1)
+       }
+       const ordersList = await Order.find({
+           dateOrdered: filter
+       }).select("orderItems");
+       ordersList.map(o => order.total += JSON.parse(o.orderItems).total)
+       orderTotal[indice].month = new Intl.DateTimeFormat('es-ES', { month: 'long'}).format(new Date(new Date().getFullYear(), new Date().getMonth() - indice, 1));
+   }
+    const lastMonth = orderTotal[0].total - orderTotal[1].total
+    const lastThreeMonths =  (orderTotal[0].total +  orderTotal[1].total + orderTotal[2].total) - (orderTotal[3].total +  orderTotal[4].total +  orderTotal[5].total)
+    
+    res.status(200).send({
+        ordersSixMonths: [...orderTotal].reverse(), 
+        lastMonth: lastMonth ,
+        lastThreeMonths: lastThreeMonths
+    })
+}
