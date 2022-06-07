@@ -86,6 +86,7 @@ const registerMail = async (
         console.log(error);
       } else {
         console.log("El correo se envío correctamente " + info.response);
+        return {success: true};
       }
     });
   } catch (error) {

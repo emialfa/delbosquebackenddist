@@ -81,6 +81,7 @@ transporter.sendMail(mail_options, (error:any, info:any) => {
         console.log(error);
     } else {
         console.log('El correo se envío correctamente ' + info.response);
+        return {success: true};
     }
 });
   } catch (error) {

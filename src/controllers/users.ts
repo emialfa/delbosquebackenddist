@@ -202,7 +202,6 @@ export const loginFacebookAuth = async (req: Request, res: Response) => {
 }
 export const register = async (req: Request, res: Response) => {
   const userExist = await User.findOne({ email: req.body.email });
-  console.log(userExist)
   if (userExist) return res.status(400).send({success: false});
   
   const user = new User({
@@ -211,15 +210,13 @@ export const register = async (req: Request, res: Response) => {
     activation: false,
   });
   const registerUserRes = await user.save();
-  console.log(registerUserRes)
 
   const token = getToken({ _id: registerUserRes?._id })
 
   if (!registerUserRes) return res.status(400).send({success:false, message: "the user cannot be created!"});
 
   const registerMailRes = await registerMail(req.body.name, req.body.email, token);
-  console.log(registerMailRes)
-  //if (!registerMailRes) return res.status(400).send({success: false, message: registerMailRes, token });
+  if (!registerMailRes) return res.status(400).send({success: false, message: registerMailRes, token });
   
   res.json({ success: true, message: 'The email has been sent.', token })
 };
