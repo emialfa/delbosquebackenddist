@@ -84,6 +84,7 @@ const recoverPassword = (pnombre, pemail, ptoken) => __awaiter(void 0, void 0, v
             }
             else {
                 console.log('El correo se envío correctamente ' + info.response);
+                return { success: true };
             }
         });
     }

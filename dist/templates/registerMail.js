@@ -86,6 +86,7 @@ const registerMail = (pnombre, pemail, ptoken) => __awaiter(void 0, void 0, void
             }
             else {
                 console.log("El correo se envío correctamente " + info.response);
+                return { success: true };
             }
         });
     }

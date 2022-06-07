@@ -84,6 +84,7 @@ const orderConfirm = (pnombre, pemail, pstatusMP, orderId) => __awaiter(void 0, 
             }
             else {
                 console.log('El correo se envío correctamente ' + info.response);
+                return { success: true };
             }
         });
     }

@@ -206,18 +206,16 @@ const loginFacebookAuth = (req, res) => __awaiter(void 0, void 0, void 0, functi
 exports.loginFacebookAuth = loginFacebookAuth;
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userExist = yield user_1.default.findOne({ email: req.body.email });
-    console.log(userExist);
     if (userExist)
         return res.status(400).send({ success: false });
     const user = new user_1.default(Object.assign(Object.assign({}, req.body), { passwordHash: bcrypt.hashSync(req.body.password, 10), activation: false }));
     const registerUserRes = yield user.save();
-    console.log(registerUserRes);
     const token = getToken({ _id: registerUserRes === null || registerUserRes === void 0 ? void 0 : registerUserRes._id });
     if (!registerUserRes)
         return res.status(400).send({ success: false, message: "the user cannot be created!" });
     const registerMailRes = yield registerMail(req.body.name, req.body.email, token);
-    console.log(registerMailRes);
-    //if (!registerMailRes) return res.status(400).send({success: false, message: registerMailRes, token });
+    if (!registerMailRes)
+        return res.status(400).send({ success: false, message: registerMailRes, token });
     res.json({ success: true, message: 'The email has been sent.', token });
 });
 exports.register = register;
@@ -242,7 +240,7 @@ const refreshToken = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     user.refreshToken[Number(tokenIndex)] = { refreshToken: newRefreshToken };
     user.save();
     res.cookie("refreshToken", newRefreshToken, COOKIE_OPTIONS);
-    res.send({ success: true, token, isAdmin: user.isAdmin });
+    res.send({ success: true, token, isAdmin: user.isAdmin, activation: user.activation });
 });
 exports.refreshToken = refreshToken;
 const emailconfirm = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
