@@ -206,11 +206,12 @@ const loginFacebookAuth = (req, res) => __awaiter(void 0, void 0, void 0, functi
 exports.loginFacebookAuth = loginFacebookAuth;
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userExist = yield user_1.default.findOne({ email: req.body.email });
+    console.log(userExist);
     if (userExist)
         return res.status(400).send({ success: false });
-    const secret = process.env.secret;
     const user = new user_1.default(Object.assign(Object.assign({}, req.body), { passwordHash: bcrypt.hashSync(req.body.password, 10), activation: false }));
     const registerUserRes = yield user.save();
+    console.log(registerUserRes);
     const token = getToken({ _id: registerUserRes === null || registerUserRes === void 0 ? void 0 : registerUserRes._id });
     if (!registerUserRes)
         return res.status(400).send({ success: false, message: "the user cannot be created!" });

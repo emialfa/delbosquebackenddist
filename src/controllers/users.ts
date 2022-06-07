@@ -202,15 +202,16 @@ export const loginFacebookAuth = async (req: Request, res: Response) => {
 }
 export const register = async (req: Request, res: Response) => {
   const userExist = await User.findOne({ email: req.body.email });
+  console.log(userExist)
   if (userExist) return res.status(400).send({success: false});
   
-  const secret = process.env.secret;
   const user = new User({
     ...req.body,
     passwordHash: bcrypt.hashSync(req.body.password, 10),
     activation: false,
   });
   const registerUserRes = await user.save();
+  console.log(registerUserRes)
 
   const token = getToken({ _id: registerUserRes?._id })
 
