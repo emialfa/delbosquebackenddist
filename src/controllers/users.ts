@@ -212,12 +212,7 @@ export const register = async (req: Request, res: Response) => {
   });
   const registerUserRes = await user.save();
 
-  const token = jwt.sign(
-    {
-      userEmail: req.body.email,
-    },
-    secret
-  );
+  const token = getToken({ _id: registerUserRes?._id })
 
   if (!registerUserRes) return res.status(400).send({success:false, message: "the user cannot be created!"});
 
@@ -259,13 +254,7 @@ export const emailconfirm = async (req: Request, res: Response) => {
   if (!userExist) return res.status(400).send("User dont exist.");
   if (userExist.activation) return res.status(200).json({ activation: true });
   
-  const secret = process.env.secret;
-  const token = jwt.sign(
-    {
-      userEmail: req.user?.email,
-    },
-    secret
-  );
+  const token = getToken({ _id: userExist._id })
 
   const registerMailResponse = await registerMail(userExist.name, req.user?.email, token)
   if(!registerMailResponse) return res.status(400).json({success: false, message: registerMailResponse})

@@ -211,9 +211,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const secret = process.env.secret;
     const user = new user_1.default(Object.assign(Object.assign({}, req.body), { passwordHash: bcrypt.hashSync(req.body.password, 10), activation: false }));
     const registerUserRes = yield user.save();
-    const token = jwt.sign({
-        userEmail: req.body.email,
-    }, secret);
+    const token = getToken({ _id: registerUserRes === null || registerUserRes === void 0 ? void 0 : registerUserRes._id });
     if (!registerUserRes)
         return res.status(400).send({ success: false, message: "the user cannot be created!" });
     const registerMailRes = yield registerMail(req.body.name, req.body.email, token);
@@ -247,31 +245,28 @@ const refreshToken = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.refreshToken = refreshToken;
 const emailconfirm = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _o, _p, _q;
+    var _o, _p;
     const userExist = yield user_1.default.findOne({ email: (_o = req.user) === null || _o === void 0 ? void 0 : _o.email });
     if (!userExist)
         return res.status(400).send("User dont exist.");
     if (userExist.activation)
         return res.status(200).json({ activation: true });
-    const secret = process.env.secret;
-    const token = jwt.sign({
-        userEmail: (_p = req.user) === null || _p === void 0 ? void 0 : _p.email,
-    }, secret);
-    const registerMailResponse = yield registerMail(userExist.name, (_q = req.user) === null || _q === void 0 ? void 0 : _q.email, token);
+    const token = getToken({ _id: userExist._id });
+    const registerMailResponse = yield registerMail(userExist.name, (_p = req.user) === null || _p === void 0 ? void 0 : _p.email, token);
     if (!registerMailResponse)
         return res.status(400).json({ success: false, message: registerMailResponse });
     return res.status(200).json({ success: true, message: registerMailResponse });
 });
 exports.emailconfirm = emailconfirm;
 const confirm = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _r, _s;
-    const userExist = yield user_1.default.findOne({ email: (_r = req.user) === null || _r === void 0 ? void 0 : _r.email });
+    var _q, _r;
+    const userExist = yield user_1.default.findOne({ email: (_q = req.user) === null || _q === void 0 ? void 0 : _q.email });
     if (!userExist)
         res.status(400).send({ success: false });
     const user = yield user_1.default.findByIdAndUpdate(userExist === null || userExist === void 0 ? void 0 : userExist._id, {
         activation: true,
     }, { new: true });
-    return res.status(200).send((_s = req.user) === null || _s === void 0 ? void 0 : _s.email);
+    return res.status(200).send((_r = req.user) === null || _r === void 0 ? void 0 : _r.email);
 });
 exports.confirm = confirm;
 const emailresetpassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -293,10 +288,10 @@ const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 });
 exports.deleteUser = deleteUser;
 const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _t;
+    var _s;
     const { signedCookies = {} } = req;
     const { refreshToken } = signedCookies;
-    const user = yield user_1.default.findById((_t = req.user) === null || _t === void 0 ? void 0 : _t._id);
+    const user = yield user_1.default.findById((_s = req.user) === null || _s === void 0 ? void 0 : _s._id);
     const tokenIndex = user.refreshToken.findIndex((item) => item.refreshToken === refreshToken);
     if (tokenIndex !== -1) {
         user.refreshToken.id(user.refreshToken[tokenIndex]._id).remove();
