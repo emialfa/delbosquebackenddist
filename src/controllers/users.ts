@@ -245,7 +245,7 @@ export const refreshToken = async (req: Request, res:Response) => {
   user.refreshToken[Number(tokenIndex)] = { refreshToken: newRefreshToken }
   user.save()
   res.cookie("refreshToken", newRefreshToken, COOKIE_OPTIONS);
-  res.send({ success: true, token, isAdmin: user.isAdmin });                      
+  res.send({ success: true, token, isAdmin: user.isAdmin, activation: user.activation });                      
 };
 
 export const emailconfirm = async (req: Request, res: Response) => {
