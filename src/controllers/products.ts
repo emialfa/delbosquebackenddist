@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import Product from "../models/product";
 import { removeFileToCloudinary, uploadFiletoCloudinary, urlDefaultImage } from "../helpers/cloudinaryFiles";
-import {UploadedFile} from "express-fileupload";
+import { UploadedFile } from "express-fileupload";
 import Order from '../models/order';
 import User from "../models/user";
 

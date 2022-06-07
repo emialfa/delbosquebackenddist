@@ -276,12 +276,9 @@ const confirm = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.confirm = confirm;
 const emailresetpassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userExist = yield user_1.default.findOne({ email: req.body.email });
-    const secret = process.env.secret;
     if (!userExist)
         return res.status(400).send({ success: false });
-    const token = jwt.sign({
-        userEmail: req.body.email,
-    }, secret);
+    const token = getToken({ _id: userExist === null || userExist === void 0 ? void 0 : userExist._id });
     const mailResponse = yield resetPasswordMail(userExist.name, req.body.email, token);
     if (!mailResponse)
         return res.status(400).send({ success: false, message: mailResponse });

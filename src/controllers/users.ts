@@ -289,15 +289,9 @@ export const confirm = async (req: Request, res: Response) => {
 
 export const emailresetpassword = async (req: Request, res: Response) => {
   const userExist = await User.findOne({ email: req.body.email });
-  const secret = process.env.secret;
   if (!userExist) return res.status(400).send({success: false});
   
-  const token = jwt.sign(
-    {
-      userEmail: req.body.email,
-    },
-    secret
-  );
+  const token = getToken({ _id: userExist?._id })
 
   const mailResponse = await resetPasswordMail(userExist.name, req.body.email, token)
   if (!mailResponse) return res.status(400).send({success: false, message: mailResponse});
