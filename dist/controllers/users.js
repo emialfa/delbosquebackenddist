@@ -216,8 +216,8 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!registerUserRes)
         return res.status(400).send({ success: false, message: "the user cannot be created!" });
     const registerMailRes = yield registerMail(req.body.name, req.body.email, token);
-    if (!registerMailRes)
-        return res.status(400).send({ success: false, message: registerMailRes, token });
+    console.log(registerMailRes);
+    //if (!registerMailRes) return res.status(400).send({success: false, message: registerMailRes, token });
     res.json({ success: true, message: 'The email has been sent.', token });
 });
 exports.register = register;

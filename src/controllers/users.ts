@@ -217,8 +217,9 @@ export const register = async (req: Request, res: Response) => {
 
   if (!registerUserRes) return res.status(400).send({success:false, message: "the user cannot be created!"});
 
-  const registerMailRes = await registerMail(req.body.name, req.body.email, token)
-  if (!registerMailRes) return res.status(400).send({success: false, message: registerMailRes, token });
+  const registerMailRes = await registerMail(req.body.name, req.body.email, token);
+  console.log(registerMailRes)
+  //if (!registerMailRes) return res.status(400).send({success: false, message: registerMailRes, token });
   
   res.json({ success: true, message: 'The email has been sent.', token })
 };
