@@ -2,7 +2,8 @@ import Order, { IOrderSchema } from '../models/order';
 import {Request, Response} from 'express'
 const mercadopago = require ('mercadopago');
 import User from '../models/user';
-const orderConfirmMail = require("../templates/order-confirm")
+const orderConfirmOther = require("../templates/orderConfirmOther")
+const orderConfirmOtherToMe = require("../templates/orderConfirmOtherToMe")
 const {MERCADOPAGO_ACCESSTOKEN, _URL_} = require('../helpers/config');
 
 mercadopago.configure({
@@ -75,8 +76,11 @@ export const addMyOrder = async (req: Request,res: Response)=>{
 
     if(!order) return res.status(400).send({success: false, message: 'The order cannot be created!'})
     
-    const mailResponse = await orderConfirmMail(userExist.name, req.user?.email, req.body.paymentMPStatus, order._id)
+    const mailResponse = await orderConfirmOther(userExist.name, req.user?.email, req.body.paymentMPStatus, order._id)
     if (!mailResponse) return res.status(400).send({success:false, message: mailResponse});
+
+    const mailResponseToMe = await orderConfirmOtherToMe(userExist.name, req.user?.email, process.env.MAIL_USER, req.body.paymentMPStatus, order._id)
+
     return res.status(200).send({success: true, message: mailResponse, order})
 }
 

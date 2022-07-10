@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const registerMail = require("../templates/registerMail");
 const resetPasswordMail = require("../templates/resetPassword");
+const confirmRegisterMail = require("../templates/confirmRegister")
 const passport = require("passport")
 const { getToken, COOKIE_OPTIONS, getRefreshToken, verifyUser } = require("../authenticate")
 const {google} = require('googleapis')
@@ -138,6 +139,9 @@ export const loginGoogleAuth = async (req: Request, res: Response) => {
     const refreshToken = getRefreshToken({ _id: newUser._id })
     newUser.refreshToken?.push({ refreshToken })
     await newUser.save()
+    const registerMailResponse = await confirmRegisterMail(name, email)
+    if(!registerMailResponse) return res.status(400).json({success: false, message: registerMailResponse})
+
     res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS)
     return res.status(200).send({
         success: true,
@@ -272,6 +276,10 @@ export const confirm = async (req: Request, res: Response) => {
     },
     { new: true }
   );
+
+  const registerMailResponse = await confirmRegisterMail(userExist?.name, req.user?.email)
+  if(!registerMailResponse) return res.status(400).json({success: false, message: registerMailResponse})
+
   return res.status(200).send(req.user?.email);
 };
 
