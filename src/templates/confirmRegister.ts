@@ -40,7 +40,7 @@ const confirmRegisterMail = async (
     let mail_options = {
       from: CLIENT_EMAIL,
       to: pemail,
-      subject: "Confirmación de registro - Del Bosque Bordados(Tienda)",
+      subject: "Confirmación de registro - Del Bosque Bordados (Tienda)",
       html: `<table width="100%" border="0" cellspacing="0" cellpadding="0" style="width:100%!important">
         <tbody><tr><td align="center">
       <table style="border:1px solid #eaeaea;border-radius:5px;margin:40px 0" width="600" border="0" cellspacing="0" cellpadding="40">
@@ -78,7 +78,7 @@ const confirmRegisterMail = async (
       </tbody></table>
       </td></tr>
       </tbody></table>`,
-      text: `Confirmación de registro - Del Bosque Bordados(Tienda)<br><br> ¡Bienvenide ${pnombre}! Te has registrado exitosamente en la tienda web de Del Bosque Bordados. Con esta cuenta podrás guardar tus favoritos y realizar tus compras, ademas de tener un registro de cada una de ellas. Puedes volver a ingresar a la tienda ingresando al siguiente link: ${process.env.URL}`,
+      text: `Confirmación de registro - Del Bosque Bordados (Tienda)<br><br> ¡Bienvenide ${pnombre}! Te has registrado exitosamente en la tienda web de Del Bosque Bordados. Con esta cuenta podrás guardar tus favoritos y realizar tus compras, ademas de tener un registro de cada una de ellas. Puedes volver a ingresar a la tienda ingresando al siguiente link: ${process.env.URL}`,
     };
     transporter.sendMail(mail_options, (error: any, info: any) => {
       if (error) {

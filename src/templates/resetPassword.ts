@@ -37,7 +37,7 @@ const recoverPassword = async (pnombre: string, pemail: string, ptoken :string) 
     let mail_options = {
         from:  CLIENT_EMAIL,
         to: pemail,
-        subject: 'Reestablecer contraseña - Del Bosque Bordados(Tienda)',
+        subject: 'Reestablecer contraseña - Del Bosque Bordados (Tienda)',
         html: `<table width="100%" border="0" cellspacing="0" cellpadding="0" style="width:100%!important">
         <tbody><tr><td align="center">
       <table style="border:1px solid #eaeaea;border-radius:5px;margin:40px 0" width="600" border="0" cellspacing="0" cellpadding="40">
@@ -74,7 +74,7 @@ const recoverPassword = async (pnombre: string, pemail: string, ptoken :string) 
       </tbody></table>
       </td></tr>
       </tbody></table>`,
-      text: `Reestablecer contraseña - Del Bosque Bordados(Tienda)<br><br> Hola ${pnombre}, para reestablecer tu contraseña ingresa al siguiente link: ${process.env.URL}/auth/changepassword?token=${ptoken}`
+      text: `Reestablecer contraseña - Del Bosque Bordados (Tienda)<br><br> Hola ${pnombre}, para reestablecer tu contraseña ingresa al siguiente link: ${process.env.URL}/auth/changepassword?token=${ptoken}`
 };
 transporter.sendMail(mail_options, (error:any, info:any) => {
     if (error) {

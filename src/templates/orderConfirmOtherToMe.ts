@@ -43,7 +43,7 @@ const orderConfirmOther = async (
     let mail_options = {
       from: CLIENT_EMAIL,
       to: pemail,
-      subject: `Confirmación de compra - ${emailClient}` ,
+      subject: `Confirmación de compra: ${emailClient}` ,
       html: `<table width="100%" border="0" cellspacing="0" cellpadding="0" style="width:100%!important">
         <tbody><tr><td align="center">
       <table style="border:1px solid #eaeaea;border-radius:5px;margin:40px 0" width="600" border="0" cellspacing="0" cellpadding="40">
@@ -57,7 +57,7 @@ const orderConfirmOther = async (
       </tbody></table>
       
       <p style="color:#000;font-family:-apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,&quot;Roboto&quot;,&quot;Oxygen&quot;,&quot;Ubuntu&quot;,&quot;Cantarell&quot;,&quot;Fira Sans&quot;,&quot;Droid Sans&quot;,&quot;Helvetica Neue&quot;,sans-serif;font-size:14px;line-height:24px">
-        ¡Una nueva compra ha sido realizada con éxito!. Sólo queda acordar el pago con ${emailClient} por medio de Whatsapp. Puede ver el detalle de la compra haciendo click en el link de abajo (su cuenta de admin debe tener iniciada la sesión) : '</p>
+        ¡Una nueva compra ha sido realizada con éxito!. Sólo queda acordar el pago con ${emailClient} por medio de Whatsapp. Puede ver el detalle de la compra haciendo click en el link de abajo (su cuenta de admin debe tener iniciada la sesión) : </p>
       <br>
       
       <table width="100%" border="0" cellspacing="0" cellpadding="0" style="width:100%!important">
@@ -80,7 +80,7 @@ const orderConfirmOther = async (
       </tbody></table>
       </td></tr>
       </tbody></table>`,
-      text: `Confirmación de compra - ${emailClient} <br><br> ¡Una nueva compra ha sido realizada con éxito!. Sólo queda acordar el pago con ${emailClient} por medio de Whatsapp. Puede ver el detalle de la compra haciendo ingresando al siguiente link (su cuenta de admin debe tener iniciada la sesión): '${process.env.URL}/admin/orders?order=${orderId}`,
+      text: `Confirmación de compra: ${emailClient} <br><br> ¡Una nueva compra ha sido realizada con éxito!. Sólo queda acordar el pago con ${emailClient} por medio de Whatsapp. Puede ver el detalle de la compra haciendo ingresando al siguiente link (su cuenta de admin debe tener iniciada la sesión): ${process.env.URL}/admin/orders?order=${orderId}`,
     };
     transporter.sendMail(mail_options, (error: any, info: any) => {
       if (error) {

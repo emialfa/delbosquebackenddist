@@ -42,7 +42,7 @@ const orderConfirmOther = async (
     let mail_options = {
       from: CLIENT_EMAIL,
       to: pemail,
-      subject: "Confirmación de su compra - Del Bosque Bordados(Tienda)",
+      subject: "Confirmación de su compra - Del Bosque Bordados (Tienda)",
       html: `<table width="100%" border="0" cellspacing="0" cellpadding="0" style="width:100%!important">
         <tbody><tr><td align="center">
       <table style="border:1px solid #eaeaea;border-radius:5px;margin:40px 0" width="600" border="0" cellspacing="0" cellpadding="40">
@@ -56,7 +56,8 @@ const orderConfirmOther = async (
       </tbody></table>
       
       <p style="color:#000;font-family:-apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,&quot;Roboto&quot;,&quot;Oxygen&quot;,&quot;Ubuntu&quot;,&quot;Cantarell&quot;,&quot;Fira Sans&quot;,&quot;Droid Sans&quot;,&quot;Helvetica Neue&quot;,sans-serif;font-size:14px;line-height:24px">¡Hola ${pnombre}!
-        ¡Su compra ha sido realizada con éxito!. Sólo queda acordar el pago por medio de Whatsapp. Puede ver el detalle de su compra en la tienda web accediendo con la cuenta en la que se realizó, a traves de la opción "Mis compras" que se encuentra en el menú "Mi cuenta", o clickea en el link de abajo para dirigirse directamente (su cuenta debe tener iniciada la sesión) : '</p>
+        ¡Tu compra ha sido realizada con éxito!. Sólo queda acordar el pago por medio de Whatsapp.</p>
+      <p style="color:#000;font-family:-apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,&quot;Roboto&quot;,&quot;Oxygen&quot;,&quot;Ubuntu&quot;,&quot;Cantarell&quot;,&quot;Fira Sans&quot;,&quot;Droid Sans&quot;,&quot;Helvetica Neue&quot;,sans-serif;font-size:14px;line-height:24px">Puede ver el detalle de su compra en la tienda web accediendo con la cuenta en la que se realizó, a traves de la opción "Mis compras" que se encuentra en el menú "Mi cuenta", o clickea en el link de abajo para dirigirse directamente (su cuenta debe tener iniciada la sesión) : </p>
       <br>
       
       <table width="100%" border="0" cellspacing="0" cellpadding="0" style="width:100%!important">
@@ -85,8 +86,8 @@ const orderConfirmOther = async (
       </tbody></table>
       </td></tr>
       </tbody></table>`,
-      text: `Confirmación de su compra - Del Bosque Bordados(Tienda)<br><br> ¡Hola ${pnombre}! ¡Su compra ha sido realizada con éxito!. Sólo queda acordar el pago por medio de Whatsapp.
-      Puede ver el detalle de su compra en la tienda web accediendo con la cuenta en la que se realizó, a traves de la opción "mis compras" que se encuentra en el menú "Mi cuenta", o ingresar al siguiente link para dirigirse directamente (su cuenta debe tener iniciada la sesión): '${
+      text: `Confirmación de su compra - Del Bosque Bordados (Tienda)<br><br> ¡Hola ${pnombre}! ¡Su compra ha sido realizada con éxito!. Sólo queda acordar el pago por medio de Whatsapp.
+      Puede ver el detalle de su compra en la tienda web accediendo con la cuenta en la que se realizó, a traves de la opción "mis compras" que se encuentra en el menú "Mi cuenta", o ingresar al siguiente link para dirigirse directamente (su cuenta debe tener iniciada la sesión): ${
         process.env.URL
       }/user/myorders/singleorder/${orderId}`,
     };

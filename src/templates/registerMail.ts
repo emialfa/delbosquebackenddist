@@ -41,7 +41,7 @@ const registerMail = async (
     let mail_options = {
       from: CLIENT_EMAIL,
       to: pemail,
-      subject: "Verificación de email - Del Bosque Bordados(Tienda)",
+      subject: "Verificación de email - Del Bosque Bordados (Tienda)",
       html: `<table width="100%" border="0" cellspacing="0" cellpadding="0" style="width:100%!important">
         <tbody><tr><td align="center">
       <table style="border:1px solid #eaeaea;border-radius:5px;margin:40px 0" width="600" border="0" cellspacing="0" cellpadding="40">
@@ -79,7 +79,7 @@ const registerMail = async (
       </tbody></table>
       </td></tr>
       </tbody></table>`,
-      text: `Verifica tu mail para registrarte en la tienda - Del Bosque Bordados(Tienda)<br><br> Hola ${pnombre}, para completar el proceso de registro en la tienda solo falta que nos confirmes tu email. Ingresa al siguiente link para confirmar tu email: ${process.env.URL}/auth/mailconfirm?token=${ptoken}`,
+      text: `Verifica tu mail para registrarte en la tienda - Del Bosque Bordados (Tienda)<br><br> Hola ${pnombre}, para completar el proceso de registro en la tienda solo falta que nos confirmes tu email. Ingresa al siguiente link para confirmar tu email: ${process.env.URL}/auth/mailconfirm?token=${ptoken}`,
     };
     transporter.sendMail(mail_options, (error: any, info: any) => {
       if (error) {
