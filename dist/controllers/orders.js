@@ -80,12 +80,11 @@ const addMyOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     let order = new order_1.default(Object.assign(Object.assign({}, req.body), { userEmail: (_e = req.user) === null || _e === void 0 ? void 0 : _e.email }));
     console.log(order);
     order = yield order.save();
+    console.log(order);
     if (!order)
         return res.status(400).send({ success: false, message: 'The order cannot be created!' });
-    const mailResponse = yield orderConfirmOther(userExist.name, (_f = req.user) === null || _f === void 0 ? void 0 : _f.email, req.body.paymentMPStatus, order._id);
-    if (!mailResponse)
-        return res.status(400).send({ success: false, message: mailResponse });
-    const mailResponseToMe = yield orderConfirmOtherToMe(userExist.name, (_g = req.user) === null || _g === void 0 ? void 0 : _g.email, process.env.MAIL_USER, req.body.paymentMPStatus, order._id);
+    const mailResponse = yield orderConfirmOther(userExist.name, (_f = req.user) === null || _f === void 0 ? void 0 : _f.email, `${req.body.paymentMPStatus}`, order._id);
+    const mailResponseToMe = yield orderConfirmOtherToMe(userExist.name, (_g = req.user) === null || _g === void 0 ? void 0 : _g.email, process.env.MAIL_USER, `${req.body.paymentMPStatus}`, order._id);
     return res.status(200).send({ success: true, message: mailResponse, order });
 });
 exports.addMyOrder = addMyOrder;
