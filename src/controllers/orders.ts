@@ -73,13 +73,12 @@ export const addMyOrder = async (req: Request,res: Response)=>{
     })
     console.log(order)
     order = await order.save();
-
-    if(!order) return res.status(400).send({success: false, message: 'The order cannot be created!'})
+    console.log(order)
+    if (!order) return res.status(400).send({success: false, message: 'The order cannot be created!'})
     
-    const mailResponse = await orderConfirmOther(userExist.name, req.user?.email, req.body.paymentMPStatus, order._id)
-    if (!mailResponse) return res.status(400).send({success:false, message: mailResponse});
+    const mailResponse = await orderConfirmOther(userExist.name, req.user?.email, `${req.body.paymentMPStatus}`, order._id)
 
-    const mailResponseToMe = await orderConfirmOtherToMe(userExist.name, req.user?.email, process.env.MAIL_USER, req.body.paymentMPStatus, order._id)
+    const mailResponseToMe = await orderConfirmOtherToMe(userExist.name, req.user?.email, process.env.MAIL_USER, `${req.body.paymentMPStatus}`, order._id)
 
     return res.status(200).send({success: true, message: mailResponse, order})
 }
