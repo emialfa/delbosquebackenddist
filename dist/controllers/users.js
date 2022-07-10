@@ -19,6 +19,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const registerMail = require("../templates/registerMail");
 const resetPasswordMail = require("../templates/resetPassword");
+const confirmRegisterMail = require("../templates/confirmRegister");
 const passport = require("passport");
 const { getToken, COOKIE_OPTIONS, getRefreshToken, verifyUser } = require("../authenticate");
 const { google } = require('googleapis');
@@ -144,6 +145,9 @@ const loginGoogleAuth = (req, res) => __awaiter(void 0, void 0, void 0, function
         const refreshToken = getRefreshToken({ _id: newUser._id });
         (_j = newUser.refreshToken) === null || _j === void 0 ? void 0 : _j.push({ refreshToken });
         yield newUser.save();
+        const registerMailResponse = yield confirmRegisterMail(name, email);
+        if (!registerMailResponse)
+            return res.status(400).json({ success: false, message: registerMailResponse });
         res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS);
         return res.status(200).send({
             success: true,
@@ -258,14 +262,17 @@ const emailconfirm = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.emailconfirm = emailconfirm;
 const confirm = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _q, _r;
+    var _q, _r, _s;
     const userExist = yield user_1.default.findOne({ email: (_q = req.user) === null || _q === void 0 ? void 0 : _q.email });
     if (!userExist)
         res.status(400).send({ success: false });
     const user = yield user_1.default.findByIdAndUpdate(userExist === null || userExist === void 0 ? void 0 : userExist._id, {
         activation: true,
     }, { new: true });
-    return res.status(200).send((_r = req.user) === null || _r === void 0 ? void 0 : _r.email);
+    const registerMailResponse = yield confirmRegisterMail(userExist === null || userExist === void 0 ? void 0 : userExist.name, (_r = req.user) === null || _r === void 0 ? void 0 : _r.email);
+    if (!registerMailResponse)
+        return res.status(400).json({ success: false, message: registerMailResponse });
+    return res.status(200).send((_s = req.user) === null || _s === void 0 ? void 0 : _s.email);
 });
 exports.confirm = confirm;
 const emailresetpassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -287,10 +294,10 @@ const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 });
 exports.deleteUser = deleteUser;
 const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _s;
+    var _t;
     const { signedCookies = {} } = req;
     const { refreshToken } = signedCookies;
-    const user = yield user_1.default.findById((_s = req.user) === null || _s === void 0 ? void 0 : _s._id);
+    const user = yield user_1.default.findById((_t = req.user) === null || _t === void 0 ? void 0 : _t._id);
     const tokenIndex = user.refreshToken.findIndex((item) => item.refreshToken === refreshToken);
     if (tokenIndex !== -1) {
         user.refreshToken.id(user.refreshToken[tokenIndex]._id).remove();

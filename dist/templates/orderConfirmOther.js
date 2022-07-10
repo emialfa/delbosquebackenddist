@@ -9,10 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 const googleapis_1 = require("googleapis");
-require('dotenv').config();
-const orderConfirm = (pnombre, pemail, pstatusMP, orderId) => __awaiter(void 0, void 0, void 0, function* () {
+require("dotenv").config();
+const orderConfirmOther = (pnombre, pemail, pstatusMP, orderId) => __awaiter(void 0, void 0, void 0, function* () {
     const CLIENT_EMAIL = process.env.MAIL_USER;
     const CLIENT_ID = process.env.GOOGLE_APP_EMAIL_CLIENT_ID;
     const CLIENT_SECRET = process.env.GOOGLE_APP_EMAIL_CLIENT_SECRET;
@@ -24,9 +24,9 @@ const orderConfirm = (pnombre, pemail, pstatusMP, orderId) => __awaiter(void 0, 
         // Generate the accessToken on the fly
         const accessToken = yield OAuth2Client.getAccessToken();
         let transporter = nodemailer.createTransport({
-            service: 'gmail',
+            service: "gmail",
             auth: {
-                type: 'OAuth2',
+                type: "OAuth2",
                 user: CLIENT_EMAIL,
                 clientId: CLIENT_ID,
                 clientSecret: CLIENT_SECRET,
@@ -34,13 +34,13 @@ const orderConfirm = (pnombre, pemail, pstatusMP, orderId) => __awaiter(void 0, 
                 accessToken: accessToken,
             },
             tls: {
-                rejectUnauthorized: false
-            }
+                rejectUnauthorized: false,
+            },
         });
         let mail_options = {
             from: CLIENT_EMAIL,
             to: pemail,
-            subject: 'Confirmación de su compra - Del Bosque Bordados(Tienda) ',
+            subject: "Confirmación de su compra - Del Bosque Bordados(Tienda)",
             html: `<table width="100%" border="0" cellspacing="0" cellpadding="0" style="width:100%!important">
         <tbody><tr><td align="center">
       <table style="border:1px solid #eaeaea;border-radius:5px;margin:40px 0" width="600" border="0" cellspacing="0" cellpadding="40">
@@ -53,7 +53,8 @@ const orderConfirm = (pnombre, pemail, pstatusMP, orderId) => __awaiter(void 0, 
       </td></tr>
       </tbody></table>
       
-      <p style="color:#000;font-family:-apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,&quot;Roboto&quot;,&quot;Oxygen&quot;,&quot;Ubuntu&quot;,&quot;Cantarell&quot;,&quot;Fira Sans&quot;,&quot;Droid Sans&quot;,&quot;Helvetica Neue&quot;,sans-serif;font-size:14px;line-height:24px">¡Hola ${pnombre}! ${pstatusMP == 'Aprobado' ? 'Su pago ha finalizado de forma exitosa.' : 'Su pago esta siendo procesado por MercadoPago y se encuentra en estado "pendiende de aprobación". Recibirá un email en cuanto MercadoPago actualicé el estado del pago.'} Puede ver el detalle de su compra en la tienda web accediendo con la cuenta en la que se realizó, a traves de la opción "Mis compras" que se encuentra en el menú "Mi cuenta", o clickea en el link de abajo para dirigirse directamente (su cuenta debe tener iniciada la sesión) : '</p>
+      <p style="color:#000;font-family:-apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,&quot;Roboto&quot;,&quot;Oxygen&quot;,&quot;Ubuntu&quot;,&quot;Cantarell&quot;,&quot;Fira Sans&quot;,&quot;Droid Sans&quot;,&quot;Helvetica Neue&quot;,sans-serif;font-size:14px;line-height:24px">¡Hola ${pnombre}!
+        ¡Su compra ha sido realizada con éxito!. Sólo queda acordar el pago por medio de Whatsapp. Puede ver el detalle de su compra en la tienda web accediendo con la cuenta en la que se realizó, a traves de la opción "Mis compras" que se encuentra en el menú "Mi cuenta", o clickea en el link de abajo para dirigirse directamente (su cuenta debe tener iniciada la sesión) : '</p>
       <br>
       
       <table width="100%" border="0" cellspacing="0" cellpadding="0" style="width:100%!important">
@@ -76,14 +77,15 @@ const orderConfirm = (pnombre, pemail, pstatusMP, orderId) => __awaiter(void 0, 
       </tbody></table>
       </td></tr>
       </tbody></table>`,
-            text: `Confirmación de su compra - Del Bosque Bordados(Tienda)<br><br> ¡Hola ${pnombre}! ${pstatusMP == 'Aprobado' ? 'Su pago ha finalizado de forma exitosa.' : 'Su pago esta siendo procesado por MercadoPago y se encuentra en estado "pendiende de aprobación". Recibirá un email en cuanto MercadoPago actualicé el estado del pago.'} Puede ver el detalle de su compra en la tienda web accediendo con la cuenta en la que se realizó, a traves de la opción "mis compras" que se encuentra en el menú "Mi cuenta", o ingresar al siguiente link para dirigirse directamente (su cuenta debe tener iniciada la sesión): '${process.env.URL}/user/myorders/singleorder/${orderId}`
+            text: `Confirmación de su compra - Del Bosque Bordados(Tienda)<br><br> ¡Hola ${pnombre}! ¡Su compra ha sido realizada con éxito!. Sólo queda acordar el pago por medio de Whatsapp.
+      Puede ver el detalle de su compra en la tienda web accediendo con la cuenta en la que se realizó, a traves de la opción "mis compras" que se encuentra en el menú "Mi cuenta", o ingresar al siguiente link para dirigirse directamente (su cuenta debe tener iniciada la sesión): '${process.env.URL}/user/myorders/singleorder/${orderId}`,
         };
         transporter.sendMail(mail_options, (error, info) => {
             if (error) {
                 console.log(error);
             }
             else {
-                console.log('El correo se envío correctamente ' + info.response);
+                console.log("El correo se envío correctamente " + info.response);
                 return { success: true };
             }
         });
@@ -93,5 +95,5 @@ const orderConfirm = (pnombre, pemail, pstatusMP, orderId) => __awaiter(void 0, 
         return error;
     }
 });
-module.exports = orderConfirm;
-//# sourceMappingURL=order-confirm.js.map
+module.exports = orderConfirmOther;
+//# sourceMappingURL=orderConfirmOther.js.map

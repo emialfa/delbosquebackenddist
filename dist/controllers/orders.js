@@ -16,7 +16,8 @@ exports.getOrdersMonths = exports.getOrdersDay = exports.getOrdersWeek = exports
 const order_1 = __importDefault(require("../models/order"));
 const mercadopago = require('mercadopago');
 const user_1 = __importDefault(require("../models/user"));
-const orderConfirmMail = require("../templates/order-confirm");
+const orderConfirmOther = require("../templates/orderConfirmOther");
+const orderConfirmOtherToMe = require("../templates/orderConfirmOtherToMe");
 const { MERCADOPAGO_ACCESSTOKEN, _URL_ } = require('../helpers/config');
 mercadopago.configure({
     access_token: `${MERCADOPAGO_ACCESSTOKEN}`
@@ -72,7 +73,7 @@ const mpnotification = (req, res) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.mpnotification = mpnotification;
 const addMyOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _d, _e, _f;
+    var _d, _e, _f, _g;
     const userExist = yield user_1.default.findOne({ email: (_d = req.user) === null || _d === void 0 ? void 0 : _d.email });
     if (!userExist)
         return res.status(400).send({ success: false });
@@ -81,9 +82,10 @@ const addMyOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     order = yield order.save();
     if (!order)
         return res.status(400).send({ success: false, message: 'The order cannot be created!' });
-    const mailResponse = yield orderConfirmMail(userExist.name, (_f = req.user) === null || _f === void 0 ? void 0 : _f.email, req.body.paymentMPStatus, order._id);
+    const mailResponse = yield orderConfirmOther(userExist.name, (_f = req.user) === null || _f === void 0 ? void 0 : _f.email, req.body.paymentMPStatus, order._id);
     if (!mailResponse)
         return res.status(400).send({ success: false, message: mailResponse });
+    const mailResponseToMe = yield orderConfirmOtherToMe(userExist.name, (_g = req.user) === null || _g === void 0 ? void 0 : _g.email, process.env.MAIL_USER, req.body.paymentMPStatus, order._id);
     return res.status(200).send({ success: true, message: mailResponse, order });
 });
 exports.addMyOrder = addMyOrder;

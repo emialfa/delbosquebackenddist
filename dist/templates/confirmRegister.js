@@ -11,8 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const nodemailer = require('nodemailer');
 const googleapis_1 = require("googleapis");
-require('dotenv').config();
-const orderConfirm = (pnombre, pemail, pstatusMP, orderId) => __awaiter(void 0, void 0, void 0, function* () {
+require("dotenv").config();
+const confirmRegisterMail = (pnombre, pemail) => __awaiter(void 0, void 0, void 0, function* () {
     const CLIENT_EMAIL = process.env.MAIL_USER;
     const CLIENT_ID = process.env.GOOGLE_APP_EMAIL_CLIENT_ID;
     const CLIENT_SECRET = process.env.GOOGLE_APP_EMAIL_CLIENT_SECRET;
@@ -24,9 +24,9 @@ const orderConfirm = (pnombre, pemail, pstatusMP, orderId) => __awaiter(void 0, 
         // Generate the accessToken on the fly
         const accessToken = yield OAuth2Client.getAccessToken();
         let transporter = nodemailer.createTransport({
-            service: 'gmail',
+            service: "gmail",
             auth: {
-                type: 'OAuth2',
+                type: "OAuth2",
                 user: CLIENT_EMAIL,
                 clientId: CLIENT_ID,
                 clientSecret: CLIENT_SECRET,
@@ -34,13 +34,13 @@ const orderConfirm = (pnombre, pemail, pstatusMP, orderId) => __awaiter(void 0, 
                 accessToken: accessToken,
             },
             tls: {
-                rejectUnauthorized: false
-            }
+                rejectUnauthorized: false,
+            },
         });
         let mail_options = {
             from: CLIENT_EMAIL,
             to: pemail,
-            subject: 'Confirmación de su compra - Del Bosque Bordados(Tienda) ',
+            subject: "Confirmación de registro - Del Bosque Bordados(Tienda)",
             html: `<table width="100%" border="0" cellspacing="0" cellpadding="0" style="width:100%!important">
         <tbody><tr><td align="center">
       <table style="border:1px solid #eaeaea;border-radius:5px;margin:40px 0" width="600" border="0" cellspacing="0" cellpadding="40">
@@ -49,26 +49,28 @@ const orderConfirm = (pnombre, pemail, pstatusMP, orderId) => __awaiter(void 0, 
       <table width="100%" border="0" cellspacing="0" cellpadding="0" style="width:100%!important">
         <tbody><tr><td align="center">
         <div><img src="https://res.cloudinary.com/delbosque-tienda/image/upload/v1636597375/DBB_-_LOGO_1__page-0001_1_Traced_z7exbh.png" width="108.9" height="88.61" alt="DelBosqueBordados" class="CToWUd" style='margin-bottom: 40px'></div>
-        <h1 style="color:#000;font-family:-apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,&quot;Roboto&quot;,&quot;Oxygen&quot;,&quot;Ubuntu&quot;,&quot;Cantarell&quot;,&quot;Fira Sans&quot;,&quot;Droid Sans&quot;,&quot;Helvetica Neue&quot;,sans-serif;font-size:24px;font-weight:normal;margin:30px 0;padding:0">Confirmación de su compra</h1>
+        <h1 style="color:#000;font-family:-apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,&quot;Roboto&quot;,&quot;Oxygen&quot;,&quot;Ubuntu&quot;,&quot;Cantarell&quot;,&quot;Fira Sans&quot;,&quot;Droid Sans&quot;,&quot;Helvetica Neue&quot;,sans-serif;font-size:24px;font-weight:normal;margin:30px 0;padding:0">Verifica tu email para registrarte en la tienda</h1>
       </td></tr>
       </tbody></table>
       
-      <p style="color:#000;font-family:-apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,&quot;Roboto&quot;,&quot;Oxygen&quot;,&quot;Ubuntu&quot;,&quot;Cantarell&quot;,&quot;Fira Sans&quot;,&quot;Droid Sans&quot;,&quot;Helvetica Neue&quot;,sans-serif;font-size:14px;line-height:24px">¡Hola ${pnombre}! ${pstatusMP == 'Aprobado' ? 'Su pago ha finalizado de forma exitosa.' : 'Su pago esta siendo procesado por MercadoPago y se encuentra en estado "pendiende de aprobación". Recibirá un email en cuanto MercadoPago actualicé el estado del pago.'} Puede ver el detalle de su compra en la tienda web accediendo con la cuenta en la que se realizó, a traves de la opción "Mis compras" que se encuentra en el menú "Mi cuenta", o clickea en el link de abajo para dirigirse directamente (su cuenta debe tener iniciada la sesión) : '</p>
+      <p style="color:#000;font-family:-apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,&quot;Roboto&quot;,&quot;Oxygen&quot;,&quot;Ubuntu&quot;,&quot;Cantarell&quot;,&quot;Fira Sans&quot;,&quot;Droid Sans&quot;,&quot;Helvetica Neue&quot;,sans-serif;font-size:14px;line-height:24px">¡Bienvenide ${pnombre}! Te has registrado exitosamente en la tienda web de Del Bosque Bordados. Con esta cuenta podrás guardar tus favoritos y realizar tus compras, ademas de tener un registro de cada una de ellas.
+      Puedes volver a ingresar a la tienda haciendo click en el botón de abajo:</p>
       <br>
       
       <table width="100%" border="0" cellspacing="0" cellpadding="0" style="width:100%!important">
         <tbody><tr><td align="center">
       <div>
         
-          <a href="${process.env.URL}/user/myorder/${orderId}" style="background-color:#99877D;border-radius:15px;color:#fff;display:inline-block;font-family:-apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,&quot;Roboto&quot;,&quot;Oxygen&quot;,&quot;Ubuntu&quot;,&quot;Cantarell&quot;,&quot;Fira Sans&quot;,&quot;Droid Sans&quot;,&quot;Helvetica Neue&quot;,sans-serif;font-size:14px;font-weight:500;text-align:center;text-decoration:none;padding:15px 30px;white-space:nowrap;" target="_blank">Detalle de compra</a>
+          <a href="${process.env.URL}" style="background-color:#99877D;border-radius:15px;color:#fff;display:inline-block;font-family:-apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,&quot;Roboto&quot;,&quot;Oxygen&quot;,&quot;Ubuntu&quot;,&quot;Cantarell&quot;,&quot;Fira Sans&quot;,&quot;Droid Sans&quot;,&quot;Helvetica Neue&quot;,sans-serif;font-size:14px;font-weight:500;text-align:center;text-decoration:none;padding:15px 30px;white-space:nowrap;" target="_blank">Ingresar a la tienda</a>
         
       </div>
       </td></tr>
       </tbody></table>
+      
       <br>
       <p style="color:#000;font-family:-apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,&quot;Roboto&quot;,&quot;Oxygen&quot;,&quot;Ubuntu&quot;,&quot;Cantarell&quot;,&quot;Fira Sans&quot;,&quot;Droid Sans&quot;,&quot;Helvetica Neue&quot;,sans-serif;font-size:14px;line-height:24px">O copia y pega este link en tu navegador:</p>
       <p style="color:#000;font-family:-apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,&quot;Roboto&quot;,&quot;Oxygen&quot;,&quot;Ubuntu&quot;,&quot;Cantarell&quot;,&quot;Fira Sans&quot;,&quot;Droid Sans&quot;,&quot;Helvetica Neue&quot;,sans-serif;font-size:14px;line-height:24px">
-      <a href="${process.env.URL}/user/myorder/${orderId}" style="color:#067df7;text-decoration:none" target="_blank">${process.env.URL}<span class="il">/user/myorders/singleorder/${orderId}</span></a></p>
+      <a href="${process.env.URL}" style="color:#067df7;text-decoration:none" target="_blank">${process.env.URL}</a></p>
       <br>
       <hr style="border:none;border-top:1px solid #eaeaea;margin:26px 0;width:100%">
       <p style="color:#666666;font-family:-apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,&quot;Roboto&quot;,&quot;Oxygen&quot;,&quot;Ubuntu&quot;,&quot;Cantarell&quot;,&quot;Fira Sans&quot;,&quot;Droid Sans&quot;,&quot;Helvetica Neue&quot;,sans-serif;font-size:12px;line-height:24px">Por favor no responda este mail.</p>
@@ -76,22 +78,21 @@ const orderConfirm = (pnombre, pemail, pstatusMP, orderId) => __awaiter(void 0, 
       </tbody></table>
       </td></tr>
       </tbody></table>`,
-            text: `Confirmación de su compra - Del Bosque Bordados(Tienda)<br><br> ¡Hola ${pnombre}! ${pstatusMP == 'Aprobado' ? 'Su pago ha finalizado de forma exitosa.' : 'Su pago esta siendo procesado por MercadoPago y se encuentra en estado "pendiende de aprobación". Recibirá un email en cuanto MercadoPago actualicé el estado del pago.'} Puede ver el detalle de su compra en la tienda web accediendo con la cuenta en la que se realizó, a traves de la opción "mis compras" que se encuentra en el menú "Mi cuenta", o ingresar al siguiente link para dirigirse directamente (su cuenta debe tener iniciada la sesión): '${process.env.URL}/user/myorders/singleorder/${orderId}`
+            text: `Confirmación de registro - Del Bosque Bordados(Tienda)<br><br> ¡Bienvenide ${pnombre}! Te has registrado exitosamente en la tienda web de Del Bosque Bordados. Con esta cuenta podrás guardar tus favoritos y realizar tus compras, ademas de tener un registro de cada una de ellas. Puedes volver a ingresar a la tienda ingresando al siguiente link: ${process.env.URL}`,
         };
         transporter.sendMail(mail_options, (error, info) => {
             if (error) {
                 console.log(error);
             }
             else {
-                console.log('El correo se envío correctamente ' + info.response);
+                console.log("El correo se envío correctamente " + info.response);
                 return { success: true };
             }
         });
     }
     catch (error) {
-        console.log(error);
         return error;
     }
 });
-module.exports = orderConfirm;
-//# sourceMappingURL=order-confirm.js.map
+module.exports = confirmRegisterMail;
+//# sourceMappingURL=confirmRegister.js.map
